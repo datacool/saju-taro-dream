@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Galmuri11';
+  src: url('https://cdn.jsdelivr.net/npm/galmuri/dist/Galmuri11.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg: #0a0a0f;
+  --green: #4ade80;
+  --green-dim: rgba(74, 222, 128, 0.08);
+  --green-border: rgba(74, 222, 128, 0.25);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  background: var(--bg);
+  color: #e5e7eb;
+  min-height: 100vh;
+}
+
+body {
+  font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+}
+
+.font-pixel {
+  font-family: 'Galmuri11', monospace;
+  letter-spacing: 0.05em;
+}
+
+.glow-green {
+  text-shadow: 0 0 12px rgba(74, 222, 128, 0.7), 0 0 24px rgba(74, 222, 128, 0.3);
+}
+
+.glow-green-sm {
+  text-shadow: 0 0 6px rgba(74, 222, 128, 0.5);
+}
+
+.border-green-glow {
+  box-shadow: 0 0 8px rgba(74, 222, 128, 0.15), inset 0 0 8px rgba(74, 222, 128, 0.05);
+}
+
+/* 스크롤바 */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: #0a0a0f; }
+::-webkit-scrollbar-thumb { background: rgba(74, 222, 128, 0.25); border-radius: 2px; }
+
+/* 타이핑 커서 애니메이션 */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.cursor-blink::after {
+  content: '▋';
+  animation: blink 1s step-end infinite;
+  color: #4ade80;
+  margin-left: 1px;
+}
+
+/* 스캔라인 효과 */
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+.scanline {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(transparent, rgba(74, 222, 128, 0.03), transparent);
+  pointer-events: none;
+  z-index: 9999;
+  animation: scanline 8s linear infinite;
+}
