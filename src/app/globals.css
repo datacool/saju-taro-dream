@@ -9,19 +9,22 @@
 }
 
 :root {
-  --bg: #0a0a0f;
-  --green: #4ade80;
-  --green-dim: rgba(74, 222, 128, 0.08);
-  --green-border: rgba(74, 222, 128, 0.25);
+  --bg: #0B1326;
+  --primary: #7C3AED;
+  --primary-light: rgba(124, 58, 237, 0.12);
+  --accent: #FFB95F;
+  --accent-dim: rgba(255, 185, 95, 0.15);
+  --text: #E8E4F0;
+  --text-dim: rgba(232, 228, 240, 0.5);
+  --border: rgba(124, 58, 237, 0.28);
+  --border-accent: rgba(255, 185, 95, 0.3);
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 html, body {
   background: var(--bg);
-  color: #e5e7eb;
+  color: var(--text);
   min-height: 100vh;
 }
 
@@ -29,54 +32,118 @@ body {
   font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
 }
 
+.font-serif-kr {
+  font-family: 'Noto Serif KR', 'Georgia', serif;
+}
+
 .font-pixel {
   font-family: 'Galmuri11', monospace;
   letter-spacing: 0.05em;
 }
 
-.glow-green {
-  text-shadow: 0 0 12px rgba(74, 222, 128, 0.7), 0 0 24px rgba(74, 222, 128, 0.3);
+/* ── Glow helpers ─────────────────── */
+.glow-purple {
+  text-shadow: 0 0 14px rgba(124, 58, 237, 0.9), 0 0 28px rgba(124, 58, 237, 0.4);
+}
+.glow-purple-sm {
+  text-shadow: 0 0 6px rgba(124, 58, 237, 0.6);
+}
+.glow-gold {
+  text-shadow: 0 0 14px rgba(255, 185, 95, 0.9), 0 0 28px rgba(255, 185, 95, 0.4);
+}
+.glow-gold-sm {
+  text-shadow: 0 0 6px rgba(255, 185, 95, 0.6);
+}
+/* Keep legacy names so saju pages still compile */
+.glow-green       { text-shadow: 0 0 12px rgba(124, 58, 237, 0.7), 0 0 24px rgba(124, 58, 237, 0.3); }
+.glow-green-sm    { text-shadow: 0 0 6px rgba(124, 58, 237, 0.5); }
+
+/* ── Stars ────────────────────────── */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.25; transform: scale(1);   }
+  50%       { opacity: 1;    transform: scale(1.4); }
+}
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: white;
+  animation: twinkle var(--dur, 3s) ease-in-out infinite;
+  animation-delay: var(--del, 0s);
 }
 
-.glow-green-sm {
-  text-shadow: 0 0 6px rgba(74, 222, 128, 0.5);
+/* ── Card flip ────────────────────── */
+.card-3d {
+  perspective: 800px;
+}
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+.card-inner.flipped {
+  transform: rotateY(180deg);
+}
+.card-face,
+.card-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.card-back {
+  transform: rotateY(180deg);
 }
 
-.border-green-glow {
-  box-shadow: 0 0 8px rgba(74, 222, 128, 0.15), inset 0 0 8px rgba(74, 222, 128, 0.05);
-}
-
-/* 스크롤바 */
-::-webkit-scrollbar { width: 3px; }
-::-webkit-scrollbar-track { background: #0a0a0f; }
-::-webkit-scrollbar-thumb { background: rgba(74, 222, 128, 0.25); border-radius: 2px; }
-
-/* 타이핑 커서 애니메이션 */
+/* ── Typing cursor ────────────────── */
 @keyframes blink {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+  50%       { opacity: 0; }
 }
 .cursor-blink::after {
   content: '▋';
   animation: blink 1s step-end infinite;
-  color: #4ade80;
+  color: #FFB95F;
   margin-left: 1px;
 }
 
-/* 스캔라인 효과 */
+/* ── Scrollbar ────────────────────── */
+::-webkit-scrollbar        { width: 3px; }
+::-webkit-scrollbar-track  { background: #0B1326; }
+::-webkit-scrollbar-thumb  { background: rgba(124, 58, 237, 0.35); border-radius: 2px; }
+
+/* ── Scanline ─────────────────────── */
 @keyframes scanline {
-  0% { transform: translateY(-100%); }
+  0%   { transform: translateY(-100%); }
   100% { transform: translateY(100vh); }
 }
-
 .scanline {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 0; left: 0; right: 0;
   height: 2px;
-  background: linear-gradient(transparent, rgba(74, 222, 128, 0.03), transparent);
+  background: linear-gradient(transparent, rgba(124, 58, 237, 0.04), transparent);
   pointer-events: none;
   z-index: 9999;
   animation: scanline 8s linear infinite;
+}
+
+/* ── Float animation ──────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+.float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* ── Shimmer loading ──────────────── */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, rgba(124,58,237,0.05) 25%, rgba(124,58,237,0.15) 50%, rgba(124,58,237,0.05) 75%);
+  background-size: 400px 100%;
+  animation: shimmer 1.6s infinite;
 }

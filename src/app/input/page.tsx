@@ -40,7 +40,6 @@ function InputForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.year || !form.month || !form.day) return;
-
     const params = new URLSearchParams({
       name: form.name,
       gender: form.gender,
@@ -55,33 +54,40 @@ function InputForm() {
   };
 
   const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
-  const months = Array.from({ length: 12 }, (_, i) => i + 1);
-  const days = Array.from({ length: 31 }, (_, i) => i + 1);
+  const years  = Array.from({ length: 100 }, (_, i) => currentYear - i);
+  const months = Array.from({ length: 12  }, (_, i) => i + 1);
+  const days   = Array.from({ length: 31  }, (_, i) => i + 1);
+
+  const selectCls = 'bg-[#0B1326] border border-violet-500/25 text-[#E8E4F0] text-sm px-3 py-3 focus:outline-none focus:border-violet-400 transition-colors appearance-none';
+  const inputCls  = 'w-full bg-transparent border border-violet-500/25 text-[#E8E4F0] text-sm px-4 py-3 focus:outline-none focus:border-violet-400 transition-colors placeholder:text-[#E8E4F0]/25';
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] flex flex-col">
+    <div className="min-h-screen bg-[#0B1326] flex flex-col">
       {/* 헤더 */}
-      <header className="flex justify-between items-center px-6 py-5">
-        <Link href="/" className="font-pixel text-green-400 text-sm glow-green-sm hover:text-green-300 transition-colors">
-          ← AI사주
+      <header className="flex justify-between items-center px-6 py-5 border-b border-violet-500/15">
+        <Link href="/" className="font-serif-kr text-[#E8E4F0]/70 text-sm hover:text-[#E8E4F0] transition-colors">
+          ← 운세 에이전트
         </Link>
-        <span className="text-green-400/60 text-xs font-pixel">
-          {isDaily ? '오늘의 운세' : '사주 분석'}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-violet-400 text-lg">☯</span>
+          <span className="font-serif-kr text-[#E8E4F0]/80 text-sm">
+            {isDaily ? '오늘의 운세' : '사주 분석'}
+          </span>
+        </div>
+        <div className="w-16" />
       </header>
 
       {/* 폼 */}
       <main className="flex-1 flex items-center justify-center px-4 py-10">
         <div className="w-full max-w-md">
-          <div className="mb-8 text-center">
-            <div className="text-green-400/50 text-xs font-pixel tracking-widest mb-3">
+          <div className="mb-10 text-center">
+            <div className="text-[10px] font-pixel text-violet-400/50 tracking-[0.3em] mb-3">
               {isDaily ? '// TODAY FORTUNE' : '// SAJU ANALYSIS'}
             </div>
-            <h1 className="font-pixel text-2xl text-white mb-2">
+            <h1 className="font-serif-kr text-2xl text-white font-semibold mb-2">
               {isDaily ? '오늘의 운세' : '사주 분석'}
             </h1>
-            <p className="text-gray-500 text-xs">
+            <p className="text-[#E8E4F0]/40 text-xs">
               {isDaily
                 ? '오늘 하루의 운세를 AI가 분석해드립니다'
                 : '만세력 기반으로 사주팔자를 정확하게 분석합니다'}
@@ -91,30 +97,30 @@ function InputForm() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* 이름 */}
             <div>
-              <label className="block text-xs text-green-400/70 font-pixel mb-2">이름</label>
+              <label className="block text-xs text-violet-400/70 font-pixel mb-2 tracking-wider">이름</label>
               <input
                 type="text"
                 value={form.name}
                 onChange={e => set('name', e.target.value)}
                 placeholder="이름을 입력하세요"
                 required
-                className="w-full bg-transparent border border-green-400/30 text-white text-sm px-4 py-3 focus:outline-none focus:border-green-400 transition-colors placeholder:text-gray-600"
+                className={inputCls}
               />
             </div>
 
             {/* 성별 */}
             <div>
-              <label className="block text-xs text-green-400/70 font-pixel mb-2">성별</label>
+              <label className="block text-xs text-violet-400/70 font-pixel mb-2 tracking-wider">성별</label>
               <div className="flex gap-3">
                 {[['male', '남성'], ['female', '여성']].map(([val, label]) => (
                   <button
                     key={val}
                     type="button"
                     onClick={() => set('gender', val)}
-                    className={`flex-1 py-3 text-sm font-pixel border transition-colors ${
+                    className={`flex-1 py-3 text-sm border transition-colors ${
                       form.gender === val
-                        ? 'border-green-400 bg-green-400/15 text-green-400'
-                        : 'border-green-400/20 text-gray-500 hover:border-green-400/50'
+                        ? 'border-violet-400 bg-violet-600/20 text-violet-300'
+                        : 'border-violet-500/20 text-[#E8E4F0]/40 hover:border-violet-500/50'
                     }`}
                   >
                     {label}
@@ -125,34 +131,19 @@ function InputForm() {
 
             {/* 생년월일 */}
             <div>
-              <label className="block text-xs text-green-400/70 font-pixel mb-2">생년월일</label>
+              <label className="block text-xs text-violet-400/70 font-pixel mb-2 tracking-wider">생년월일</label>
               <div className="grid grid-cols-3 gap-2">
-                <select
-                  value={form.year}
-                  onChange={e => set('year', e.target.value)}
-                  required
-                  className="bg-[#0a0a0f] border border-green-400/30 text-white text-sm px-3 py-3 focus:outline-none focus:border-green-400 transition-colors appearance-none"
-                >
+                <select value={form.year}  onChange={e => set('year',  e.target.value)} required className={selectCls}>
                   <option value="">년</option>
-                  {years.map(y => <option key={y} value={y}>{y}년</option>)}
+                  {years.map(y  => <option key={y}  value={y}>{y}년</option>)}
                 </select>
-                <select
-                  value={form.month}
-                  onChange={e => set('month', e.target.value)}
-                  required
-                  className="bg-[#0a0a0f] border border-green-400/30 text-white text-sm px-3 py-3 focus:outline-none focus:border-green-400 transition-colors appearance-none"
-                >
+                <select value={form.month} onChange={e => set('month', e.target.value)} required className={selectCls}>
                   <option value="">월</option>
-                  {months.map(m => <option key={m} value={m}>{m}월</option>)}
+                  {months.map(m => <option key={m}  value={m}>{m}월</option>)}
                 </select>
-                <select
-                  value={form.day}
-                  onChange={e => set('day', e.target.value)}
-                  required
-                  className="bg-[#0a0a0f] border border-green-400/30 text-white text-sm px-3 py-3 focus:outline-none focus:border-green-400 transition-colors appearance-none"
-                >
+                <select value={form.day}   onChange={e => set('day',   e.target.value)} required className={selectCls}>
                   <option value="">일</option>
-                  {days.map(d => <option key={d} value={d}>{d}일</option>)}
+                  {days.map(d   => <option key={d}  value={d}>{d}일</option>)}
                 </select>
               </div>
             </div>
@@ -160,36 +151,35 @@ function InputForm() {
             {/* 태어난 시간 */}
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className="text-xs text-green-400/70 font-pixel">태어난 시간</label>
+                <label className="text-xs text-violet-400/70 font-pixel tracking-wider">태어난 시간</label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={form.unknownTime}
                     onChange={e => set('unknownTime', e.target.checked)}
-                    className="accent-green-400"
+                    className="accent-violet-400"
                   />
-                  <span className="text-xs text-gray-500">모름</span>
+                  <span className="text-xs text-[#E8E4F0]/40">모름</span>
                 </label>
               </div>
               <select
                 value={form.hour}
                 onChange={e => set('hour', e.target.value)}
                 disabled={form.unknownTime}
-                className="w-full bg-[#0a0a0f] border border-green-400/30 text-white text-sm px-3 py-3 focus:outline-none focus:border-green-400 transition-colors appearance-none disabled:opacity-30 disabled:cursor-not-allowed"
+                className={`w-full ${selectCls} disabled:opacity-30 disabled:cursor-not-allowed`}
               >
                 {HOURS.map(h => (
                   <option key={h.value} value={h.value}>{h.label}</option>
                 ))}
               </select>
               {form.unknownTime && (
-                <p className="text-gray-600 text-xs mt-1.5">시주는 낮 12시 기준으로 계산됩니다</p>
+                <p className="text-[#E8E4F0]/30 text-xs mt-1.5">시주는 낮 12시 기준으로 계산됩니다</p>
               )}
             </div>
 
-            {/* 제출 */}
             <button
               type="submit"
-              className="w-full py-4 bg-green-400 text-black font-bold text-sm font-pixel hover:bg-green-300 transition-colors mt-6"
+              className="w-full py-4 bg-violet-600 hover:bg-violet-500 text-white font-medium text-sm transition-colors mt-6"
             >
               {isDaily ? '오늘의 운세 분석하기' : '사주 분석 시작하기'}
             </button>
@@ -203,8 +193,8 @@ function InputForm() {
 export default function InputPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
-        <span className="font-pixel text-green-400 text-sm animate-pulse">Loading...</span>
+      <div className="min-h-screen bg-[#0B1326] flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-violet-500/30 border-t-violet-400 rounded-full animate-spin" />
       </div>
     }>
       <InputForm />
