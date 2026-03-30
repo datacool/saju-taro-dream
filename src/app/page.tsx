@@ -1,15 +1,20 @@
+'use client';
+
+import { useState } from 'react';
 import Link from 'next/link';
 
 const SERVICES = [
   {
     id: 'saju',
-    symbol: '☯',
+    symbol: '仙',
     title: '사주',
     subtitle: 'FOUR PILLARS',
     desc: '만세력 기반 사주팔자 분석',
     detail: '절기 기반 정확한 만세력으로 타고난 기질부터 재물운, 연애운까지 AI가 심층 분석합니다',
     tags: ['기질분석', '직업운', '연애운', '재물운', '건강운', '올해운세'],
     href: '/input?mode=standard',
+    character: '박진인',
+    quote: '허허, 자네의 타고난 기운이 궁금하신가? 천지인의 이치로 운명을 살펴보겠소.',
     accentColor: '#7C3AED',
     accentClass: 'text-violet-400',
     borderClass: 'border-violet-500/30',
@@ -17,6 +22,9 @@ const SERVICES = [
     badgeClass: 'border-violet-500/30 bg-violet-600/10 text-violet-300',
     btnClass: 'bg-violet-600 hover:bg-violet-500 text-white',
     btnOutlineClass: 'border-violet-500/40 text-violet-400 hover:border-violet-400 hover:bg-violet-600/10',
+    glowClass: 'glow-purple',
+    avatarRing: 'avatar-ring-violet',
+    nebulaClass: 'bg-violet-700/12',
   },
   {
     id: 'tarot',
@@ -27,6 +35,8 @@ const SERVICES = [
     detail: '당신의 고민에 맞는 3장의 카드가 펼쳐집니다. 상황·조언·결과를 AI가 깊이 있게 해석합니다',
     tags: ['상황분석', '조언카드', '결과예측', '3카드 스프레드'],
     href: '/tarot',
+    character: '마담 셀레스트',
+    quote: 'Les étoiles vous attendent… 별들이 당신을 기다리고 있어요. 카드가 속삭입니다.',
     accentColor: '#FFB95F',
     accentClass: 'text-amber-400',
     borderClass: 'border-amber-500/30',
@@ -34,6 +44,9 @@ const SERVICES = [
     badgeClass: 'border-amber-500/30 bg-amber-500/10 text-amber-300',
     btnClass: 'bg-amber-500 hover:bg-amber-400 text-black',
     btnOutlineClass: 'border-amber-500/40 text-amber-400 hover:border-amber-400 hover:bg-amber-500/10',
+    glowClass: 'glow-gold',
+    avatarRing: 'avatar-ring-gold',
+    nebulaClass: 'bg-amber-700/10',
   },
   {
     id: 'dream',
@@ -44,6 +57,8 @@ const SERVICES = [
     detail: '꿈 속 상징들이 전하는 메시지를 심리학적·운세적 관점에서 AI가 해석해 드립니다',
     tags: ['상징해석', '심리분석', '운세관점', '잠재의식'],
     href: '/dream',
+    character: '몽신 아라',
+    quote: '어젯밤 꿈이 아직 마음에 남아 있나요? 꿈의 결이 저에게도 느껴져요…',
     accentColor: '#60A5FA',
     accentClass: 'text-blue-400',
     borderClass: 'border-blue-500/30',
@@ -51,10 +66,12 @@ const SERVICES = [
     badgeClass: 'border-blue-500/30 bg-blue-500/10 text-blue-300',
     btnClass: 'bg-blue-600 hover:bg-blue-500 text-white',
     btnOutlineClass: 'border-blue-500/40 text-blue-400 hover:border-blue-400 hover:bg-blue-500/10',
+    glowClass: 'glow-blue',
+    avatarRing: 'avatar-ring-blue',
+    nebulaClass: 'bg-blue-700/10',
   },
 ];
 
-// 별 위치 고정 (hydration 오류 방지)
 const STARS = [
   { x:5,  y:8,  s:1.5, d:2.1, del:0   },
   { x:12, y:22, s:1,   d:3.4, del:0.5 },
@@ -79,6 +96,8 @@ const STARS = [
 ];
 
 export default function HomePage() {
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+
   return (
     <main className="min-h-screen bg-[#0B1326] overflow-x-hidden">
 
@@ -98,9 +117,24 @@ export default function HomePage() {
             } as React.CSSProperties}
           />
         ))}
-        {/* 보라 nebula gradient */}
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-violet-700/8 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-700/8 rounded-full blur-3xl" />
+        {/* nebula gradients — 호버 서비스 색상으로 반응 */}
+        <div
+          className="absolute top-0 left-1/4 w-96 h-96 rounded-full blur-3xl transition-all duration-700"
+          style={{
+            background: hoveredId === 'saju' ? 'rgba(124,58,237,0.12)'
+              : hoveredId === 'tarot' ? 'rgba(255,185,95,0.10)'
+              : hoveredId === 'dream' ? 'rgba(96,165,250,0.10)'
+              : 'rgba(124,58,237,0.06)',
+          }}
+        />
+        <div
+          className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full blur-3xl transition-all duration-700"
+          style={{
+            background: hoveredId === 'dream' ? 'rgba(96,165,250,0.10)'
+              : hoveredId === 'tarot' ? 'rgba(255,185,95,0.08)'
+              : 'rgba(96,165,250,0.06)',
+          }}
+        />
       </div>
 
       <div className="relative z-10">
@@ -147,12 +181,45 @@ export default function HomePage() {
             {SERVICES.map(svc => (
               <div
                 key={svc.id}
-                className={`relative border ${svc.borderClass} ${svc.bgClass} backdrop-blur-sm p-6 flex flex-col group hover:border-opacity-60 transition-all duration-300`}
+                className={`relative border ${svc.borderClass} ${svc.bgClass} backdrop-blur-sm p-6 flex flex-col group transition-all duration-300 cursor-pointer`}
+                style={{
+                  borderColor: hoveredId === svc.id ? svc.accentColor + '60' : undefined,
+                  boxShadow: hoveredId === svc.id ? `0 0 30px ${svc.accentColor}18` : undefined,
+                }}
+                onMouseEnter={() => setHoveredId(svc.id)}
+                onMouseLeave={() => setHoveredId(null)}
               >
                 {/* 상단 라벨 */}
-                <div className="flex justify-between items-start mb-6">
+                <div className="flex justify-between items-start mb-4">
                   <span className={`text-[10px] font-pixel ${svc.accentClass} opacity-50`}>{svc.subtitle}</span>
-                  <span className={`text-3xl ${svc.accentClass} float`}>{svc.symbol}</span>
+                  {/* 캐릭터 아바타 */}
+                  <div
+                    className={`w-10 h-10 rounded-full border flex items-center justify-center text-lg font-serif-kr font-bold transition-all duration-300 ${svc.avatarRing}`}
+                    style={{
+                      borderColor: svc.accentColor + '50',
+                      background: svc.accentColor + '15',
+                      color: svc.accentColor,
+                    }}
+                  >
+                    {svc.symbol}
+                  </div>
+                </div>
+
+                {/* 캐릭터 이름 */}
+                <div className={`text-[10px] font-pixel ${svc.accentClass} opacity-60 mb-1`}>
+                  {svc.character}
+                </div>
+
+                {/* 캐릭터 대사 — 호버 시 등장 */}
+                <div
+                  className={`overflow-hidden transition-all duration-300 ${hoveredId === svc.id ? 'max-h-20 mb-3' : 'max-h-0 mb-0'}`}
+                >
+                  <p
+                    className={`text-[11px] leading-relaxed italic ${svc.accentClass} opacity-80 border-l-2 pl-2`}
+                    style={{ borderColor: svc.accentColor + '50' }}
+                  >
+                    "{svc.quote}"
+                  </p>
                 </div>
 
                 {/* 제목 */}

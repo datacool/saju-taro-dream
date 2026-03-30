@@ -2,9 +2,9 @@
 
 import { useState, useRef } from 'react';
 import Link from 'next/link';
-import { drawCards, formatCardsForPrompt, type DrawnCard } from '@/lib/tarot';
+import { drawCards, formatCardsForPrompt, type DrawnCard, type TarotCard } from '@/lib/tarot';
 
-type Step = 'input' | 'cards' | 'result';
+type Step = 'input' | 'shuffling' | 'spread' | 'cards' | 'result';
 
 const SUIT_LABELS: Record<string, string> = {
   major: '대아르카나',
@@ -28,38 +28,75 @@ const POSITION_DESC: Record<string, string> = {
   '결과': '이 상황이 이끄는 결과와 가능성을 보여줍니다',
 };
 
+const POSITIONS: Array<'상황' | '조언' | '결과'> = ['상황', '조언', '결과'];
+
+// 셔플용 덱 시각 표현 카드
+const DECK_LAYERS = [
+  { cls: 'shuffle-a', z: 30, offset: -4 },
+  { cls: 'shuffle-b', z: 20, offset: -2 },
+  { cls: 'shuffle-c', z: 10, offset: 0 },
+];
+
+// 부채꼴 7장 배치 설정
+const FAN_CONFIG = [
+  { rotate: -18, baseY: 18 },
+  { rotate: -12, baseY: 9 },
+  { rotate: -6,  baseY: 3 },
+  { rotate: 0,   baseY: 0 },
+  { rotate: 6,   baseY: 3 },
+  { rotate: 12,  baseY: 9 },
+  { rotate: 18,  baseY: 18 },
+];
+
+function CardBack({ accentColor = '#FFB95F', small = false }: { accentColor?: string; small?: boolean }) {
+  const h = small ? 'h-[140px]' : 'h-[180px]';
+  const w = small ? 'w-[90px]' : 'w-[112px]';
+  return (
+    <div
+      className={`${w} ${h} border flex flex-col items-center justify-center rounded-sm relative overflow-hidden`}
+      style={{ borderColor: accentColor + '50', background: '#0B1326' }}
+    >
+      {/* 내부 장식 */}
+      <div className="absolute inset-2 border opacity-20" style={{ borderColor: accentColor }} />
+      <div className="text-3xl mb-2 float" style={{ color: accentColor, filter: `drop-shadow(0 0 6px ${accentColor})` }}>✦</div>
+      <div
+        className="w-8 h-8 border rotate-45 flex items-center justify-center"
+        style={{ borderColor: accentColor + '40' }}
+      >
+        <div className="text-[10px] -rotate-45" style={{ color: accentColor + '60' }}>★</div>
+      </div>
+      <div className="mt-2 text-[8px] font-pixel tracking-widest" style={{ color: accentColor + '50' }}>TAROT</div>
+    </div>
+  );
+}
+
 function TarotCardDisplay({ card, flipped }: { card: DrawnCard; flipped: boolean }) {
   const suitColor = SUIT_COLORS[card.suit] ?? 'text-violet-300 border-violet-500/40 bg-violet-600/15';
-
   return (
-    <div className="card-3d" style={{ height: '220px' }}>
+    <div className="card-3d" style={{ height: '200px', width: '100%' }}>
       <div className={`card-inner ${flipped ? 'flipped' : ''}`}>
         {/* 뒷면 */}
         <div className="card-face border border-amber-500/30 bg-[#0B1326] flex flex-col items-center justify-center h-full rounded-sm">
-          <div className="text-4xl text-amber-400/60 mb-2 glow-gold-sm">✦</div>
-          <div className="w-12 h-12 border border-amber-500/20 rotate-45 flex items-center justify-center">
+          <div className="text-3xl text-amber-400/60 mb-2 glow-gold-sm">✦</div>
+          <div className="w-10 h-10 border border-amber-500/20 rotate-45 flex items-center justify-center">
             <div className="text-amber-400/40 text-xs -rotate-45">★</div>
           </div>
           <div className="mt-3 text-amber-400/30 text-[9px] font-pixel tracking-widest">TAROT</div>
         </div>
-
         {/* 앞면 */}
         <div className={`card-back border ${suitColor.split(' ')[1]} ${suitColor.split(' ')[2]} flex flex-col p-3 h-full rounded-sm`}>
           <div className="flex justify-between items-start mb-2">
             <span className={`text-[9px] px-1.5 py-0.5 border ${suitColor} rounded-sm`}>{SUIT_LABELS[card.suit]}</span>
-            {card.reversed && <span className="text-[9px] text-red-400/70 border border-red-500/30 px-1 py-0.5">역방향</span>}
+            {card.reversed && <span className="text-[9px] text-red-400/70 border border-red-500/30 px-1 py-0.5">역</span>}
           </div>
-
           <div className={`text-3xl text-center my-2 ${suitColor.split(' ')[0]}`}>{card.symbol}</div>
-
           <div className="text-center mb-2">
-            <div className="text-white text-sm font-medium leading-tight">{card.nameKor}</div>
-            <div className="text-[#E8E4F0]/35 text-[10px] mt-0.5">{card.name}</div>
+            <div className="text-white text-xs font-medium leading-tight">{card.nameKor}</div>
+            <div className="text-[#E8E4F0]/30 text-[9px] mt-0.5">{card.name}</div>
           </div>
-
           <div className="flex flex-wrap gap-1 justify-center mt-auto">
             {card.keywords.slice(0, 2).map(kw => (
-              <span key={kw} className="text-[9px] text-[#E8E4F0]/50">{kw}</span>
+              <span key={kw} className="text-[9px] text-[#E8E4F0]/45">{kw}</span>
             ))}
           </div>
         </div>
@@ -76,8 +113,7 @@ function renderMarkdown(text: string) {
       return <h2 key={i} className="text-amber-400 font-serif-kr text-base font-semibold mt-7 mb-3 pb-1.5 border-b border-amber-500/20 first:mt-0">{t.slice(3)}</h2>;
     if (t.startsWith('### '))
       return <h3 key={i} className="text-amber-300/80 text-sm font-medium mt-4 mb-2">{t.slice(4)}</h3>;
-    if (t === '')
-      return <div key={i} className="h-1.5" />;
+    if (t === '') return <div key={i} className="h-1.5" />;
     const parts = t.split(/(\*\*[^*]+\*\*)/g);
     return (
       <p key={i} className="text-[#E8E4F0]/75 text-sm leading-[1.9] my-0.5">
@@ -94,21 +130,62 @@ function renderMarkdown(text: string) {
 export default function TarotPage() {
   const [step, setStep] = useState<Step>('input');
   const [question, setQuestion] = useState('');
+
+  // 스프레드용 7장 (TarotCard 기반)
+  const [spreadCards, setSpreadCards] = useState<TarotCard[]>([]);
+  const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
+  const [hoveredSpreadIdx, setHoveredSpreadIdx] = useState(-1);
+
+  // 최종 선택된 3장 DrawnCard
   const [cards, setCards] = useState<DrawnCard[]>([]);
-  const [flippedIdx, setFlippedIdx] = useState(-1); // -1=none, 0/1/2=순서대로
+  const [flippedIdx, setFlippedIdx] = useState(-1);
+
   const [streamText, setStreamText] = useState('');
   const [streaming, setStreaming] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState('');
   const calledRef = useRef(false);
+  const shuffleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // 셔플 단계 시작
   const handleDraw = () => {
     if (!question.trim()) return;
-    const drawn = drawCards(3);
-    setCards(drawn);
+    // 7장 draw (위치는 나중에 덮어씀)
+    const drawn7 = drawCards(7) as TarotCard[];
+    setSpreadCards(drawn7);
+    setSelectedIndices([]);
+    setStep('shuffling');
+
+    // 2.5초 후 스프레드 단계로
+    shuffleTimerRef.current = setTimeout(() => {
+      setStep('spread');
+    }, 2500);
+  };
+
+  // 스프레드에서 카드 선택
+  const handleCardSelect = (idx: number) => {
+    if (selectedIndices.includes(idx)) {
+      setSelectedIndices(prev => prev.filter(i => i !== idx));
+      return;
+    }
+    if (selectedIndices.length >= 3) return;
+    setSelectedIndices(prev => [...prev, idx]);
+  };
+
+  // 선택 완료 → cards 단계
+  const handleConfirmSelection = () => {
+    if (selectedIndices.length !== 3) return;
+    const finalCards: DrawnCard[] = selectedIndices.map((spreadIdx, posIdx) => {
+      const base = spreadCards[spreadIdx];
+      return {
+        ...base,
+        position: POSITIONS[posIdx],
+        reversed: Math.random() < 0.25,
+      } as DrawnCard;
+    });
+    setCards(finalCards);
     setStep('cards');
 
-    // 카드 순차 플립 (0.5초 간격)
     setTimeout(() => setFlippedIdx(0), 800);
     setTimeout(() => setFlippedIdx(1), 1600);
     setTimeout(() => setFlippedIdx(2), 2400);
@@ -149,8 +226,12 @@ export default function TarotPage() {
   };
 
   const handleReset = () => {
+    if (shuffleTimerRef.current) clearTimeout(shuffleTimerRef.current);
     setStep('input');
     setQuestion('');
+    setSpreadCards([]);
+    setSelectedIndices([]);
+    setHoveredSpreadIdx(-1);
     setCards([]);
     setFlippedIdx(-1);
     setStreamText('');
@@ -160,39 +241,48 @@ export default function TarotPage() {
     calledRef.current = false;
   };
 
+  const canReset = step !== 'input' && step !== 'shuffling';
+
   return (
     <div className="min-h-screen bg-[#0B1326]">
-
       {/* 헤더 */}
       <header className="flex justify-between items-center px-6 py-5 border-b border-amber-500/15">
         <Link href="/" className="font-serif-kr text-[#E8E4F0]/70 text-sm hover:text-[#E8E4F0] transition-colors">
           ← 운세 에이전트
         </Link>
         <div className="flex items-center gap-2">
-          <span className="text-amber-400 text-lg">✦</span>
+          <span className="text-amber-400 text-lg glow-gold-sm">✦</span>
           <span className="font-serif-kr text-[#E8E4F0]/80 text-sm">타로 리딩</span>
         </div>
-        {(step === 'cards' || step === 'result') && (
+        {canReset ? (
           <button onClick={handleReset} className="text-[10px] font-pixel text-[#E8E4F0]/40 hover:text-[#E8E4F0]/70 transition-colors">
             다시 뽑기
           </button>
+        ) : (
+          <div className="w-16" />
         )}
-        {step === 'input' && <div className="w-16" />}
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-10">
 
-        {/* ── 1단계: 질문 입력 ─────────────────────────────────── */}
+        {/* ── 1단계: 질문 입력 ─────────────────────────── */}
         {step === 'input' && (
-          <div>
+          <div className="fade-up">
+            {/* 마담 셀레스트 캐릭터 */}
             <div className="text-center mb-10">
-              <div className="text-5xl text-amber-400 mb-5 float glow-gold">✦</div>
+              <div
+                className="w-20 h-20 rounded-full border-2 border-amber-500/40 bg-amber-500/10 flex items-center justify-center text-4xl mx-auto mb-4 avatar-ring-gold"
+                style={{ filter: 'drop-shadow(0 0 12px rgba(255,185,95,0.4))' }}
+              >
+                ✦
+              </div>
+              <div className="text-amber-400/60 text-[11px] font-pixel mb-2">MADAME CÉLESTE</div>
               <h1 className="font-serif-kr text-2xl text-white font-semibold mb-3">
                 카드에게 물어보세요
               </h1>
-              <p className="text-[#E8E4F0]/45 text-sm leading-relaxed">
-                마음속 고민이나 궁금한 것을 적어주세요<br />
-                우주가 3장의 카드로 답을 드립니다
+              <p className="text-[#E8E4F0]/45 text-sm leading-relaxed italic">
+                "Les étoiles vous attendent…<br />
+                별들이 당신의 이야기를 듣고 있어요."
               </p>
             </div>
 
@@ -232,9 +322,146 @@ export default function TarotPage() {
           </div>
         )}
 
-        {/* ── 2단계: 카드 공개 ─────────────────────────────────── */}
+        {/* ── 2단계: 셔플 애니메이션 ───────────────────── */}
+        {step === 'shuffling' && (
+          <div className="flex flex-col items-center justify-center min-h-[60vh] fade-up">
+            {/* 셔플 중인 덱 */}
+            <div className="relative w-32 h-48 mb-10">
+              {DECK_LAYERS.map((layer, i) => (
+                <div
+                  key={i}
+                  className={`absolute inset-0 border-2 border-amber-500/40 bg-[#0B1326] rounded-sm ${layer.cls}`}
+                  style={{
+                    zIndex: layer.z,
+                    transform: `translateX(${layer.offset}px)`,
+                  }}
+                >
+                  <div className="w-full h-full flex flex-col items-center justify-center">
+                    <div className="text-amber-400/60 text-3xl mb-2">✦</div>
+                    <div className="w-8 h-8 border border-amber-500/30 rotate-45 flex items-center justify-center">
+                      <span className="text-amber-400/30 text-xs -rotate-45">★</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="text-center">
+              <div className="text-amber-400/60 text-[11px] font-pixel mb-3 tracking-widest">MADAME CÉLESTE</div>
+              <p className="text-[#E8E4F0]/70 text-sm italic mb-4">
+                "덱을 섞겠습니다. 마음을 비우고<br />당신의 질문에 집중해 주세요…"
+              </p>
+              <div className="dot-bounce text-amber-400/50 text-lg">
+                <span>·</span><span>·</span><span>·</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── 3단계: 카드 선택 스프레드 ────────────────── */}
+        {step === 'spread' && (
+          <div className="fade-up">
+            <div className="text-center mb-8">
+              <div className="text-amber-400/60 text-[11px] font-pixel mb-2 tracking-widest">MADAME CÉLESTE</div>
+              <p className="text-[#E8E4F0]/80 text-sm italic mb-1">
+                "카드가 준비되었습니다."
+              </p>
+              <p className="text-[#E8E4F0]/50 text-sm">
+                끌리는 카드 <span className="text-amber-400 font-medium">3장</span>을 고르세요
+              </p>
+              <p className="text-[#E8E4F0]/30 text-xs mt-1">
+                선택 순서대로 상황 · 조언 · 결과가 됩니다
+              </p>
+              {/* 질문 미리보기 */}
+              <p className="text-amber-400/50 text-xs italic mt-3 px-4">"{question}"</p>
+            </div>
+
+            {/* 부채꼴 카드 */}
+            <div
+              className="flex justify-center items-end select-none"
+              style={{ paddingTop: '60px', paddingBottom: '20px' }}
+            >
+              {spreadCards.map((card, i) => {
+                const fan = FAN_CONFIG[i];
+                const isSelected = selectedIndices.includes(i);
+                const selOrder = selectedIndices.indexOf(i);
+                const isHovered = hoveredSpreadIdx === i;
+                const hoverLift = isSelected ? -22 : isHovered ? -14 : 0;
+
+                return (
+                  <div
+                    key={card.id}
+                    className="relative"
+                    style={{
+                      marginLeft: i === 0 ? 0 : '-18px',
+                      transition: 'transform 0.2s ease',
+                      transform: `translateY(${hoverLift}px)`,
+                      zIndex: isSelected || isHovered ? 50 : 10 + i,
+                    }}
+                    onMouseEnter={() => setHoveredSpreadIdx(i)}
+                    onMouseLeave={() => setHoveredSpreadIdx(-1)}
+                    onClick={() => handleCardSelect(i)}
+                  >
+                    <div
+                      style={{
+                        transform: `rotate(${fan.rotate}deg) translateY(${fan.baseY}px)`,
+                        cursor: selectedIndices.length >= 3 && !isSelected ? 'not-allowed' : 'pointer',
+                        filter: isSelected
+                          ? 'drop-shadow(0 0 12px rgba(255,185,95,0.8))'
+                          : isHovered
+                          ? 'drop-shadow(0 0 6px rgba(255,185,95,0.5))'
+                          : 'none',
+                        opacity: selectedIndices.length >= 3 && !isSelected ? 0.4 : 1,
+                      }}
+                    >
+                      <CardBack small />
+                    </div>
+
+                    {/* 선택 번호 뱃지 */}
+                    {isSelected && (
+                      <div
+                        className="absolute -top-3 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-amber-500 text-black text-[10px] font-bold flex items-center justify-center font-pixel"
+                        style={{ zIndex: 60 }}
+                      >
+                        {selOrder + 1}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* 선택 현황 */}
+            <div className="flex justify-center gap-6 mt-6 mb-8">
+              {POSITIONS.map((pos, i) => (
+                <div key={pos} className="text-center">
+                  <div
+                    className={`w-8 h-8 rounded-full border flex items-center justify-center text-xs font-bold mx-auto mb-1 transition-all duration-200 ${
+                      selectedIndices.length > i
+                        ? 'border-amber-500 bg-amber-500/20 text-amber-400'
+                        : 'border-amber-500/20 text-[#E8E4F0]/20'
+                    }`}
+                  >
+                    {selectedIndices.length > i ? '✓' : i + 1}
+                  </div>
+                  <div className="text-[10px] font-pixel text-[#E8E4F0]/40">{pos}</div>
+                </div>
+              ))}
+            </div>
+
+            <button
+              onClick={handleConfirmSelection}
+              disabled={selectedIndices.length !== 3}
+              className="w-full py-4 bg-amber-500 hover:bg-amber-400 disabled:opacity-30 disabled:cursor-not-allowed text-black font-medium text-sm transition-colors"
+            >
+              {selectedIndices.length === 3 ? '운명을 봅니다 ✦' : `${selectedIndices.length} / 3 선택됨`}
+            </button>
+          </div>
+        )}
+
+        {/* ── 4단계: 카드 공개 ──────────────────────────── */}
         {step === 'cards' && (
-          <div>
+          <div className="fade-up">
             <div className="text-center mb-8">
               <p className="text-amber-400/60 text-xs font-pixel tracking-widest mb-2">// YOUR READING</p>
               <p className="text-[#E8E4F0]/70 text-sm italic">"{question}"</p>
@@ -248,7 +475,7 @@ export default function TarotPage() {
                   </div>
                   <TarotCardDisplay card={card} flipped={flippedIdx >= i} />
                   {flippedIdx >= i && (
-                    <div className="text-center">
+                    <div className="text-center fade-up">
                       <div className="text-white text-xs font-medium">{card.nameKor}</div>
                       <div className="flex flex-wrap gap-1 justify-center mt-1">
                         {card.keywords.slice(0, 2).map(kw => (
@@ -262,20 +489,22 @@ export default function TarotPage() {
             </div>
 
             {flippedIdx >= 2 && (
-              <div className="text-center">
-                <p className="text-[#E8E4F0]/45 text-xs mb-4">카드가 준비되었습니다. AI 해석을 시작하세요</p>
+              <div className="text-center fade-up">
+                <p className="text-[#E8E4F0]/45 text-xs mb-4">
+                  "Les cartes ont parlé… 카드가 준비되었습니다."
+                </p>
                 <button
                   onClick={handleInterpret}
                   className="px-10 py-3.5 bg-amber-500 hover:bg-amber-400 text-black font-medium text-sm transition-colors"
                 >
-                  AI 해석 보기
+                  마담 셀레스트의 해석 보기
                 </button>
               </div>
             )}
           </div>
         )}
 
-        {/* ── 3단계: AI 해석 결과 ──────────────────────────────── */}
+        {/* ── 5단계: AI 해석 결과 ───────────────────────── */}
         {step === 'result' && (
           <div>
             {/* 질문 & 카드 요약 */}
@@ -294,7 +523,6 @@ export default function TarotPage() {
               </div>
             </div>
 
-            {/* 에러 */}
             {error && (
               <div className="text-center py-8">
                 <p className="text-red-400 text-sm mb-4">{error}</p>
@@ -302,25 +530,31 @@ export default function TarotPage() {
               </div>
             )}
 
-            {/* 로딩 */}
+            {/* 로딩 — 마담 셀레스트 대사 */}
             {!streamText && streaming && (
-              <div className="flex items-center gap-3 text-[#E8E4F0]/40 text-sm py-8">
-                <div className="w-4 h-4 border border-amber-400/30 border-t-amber-400 rounded-full animate-spin shrink-0" />
-                <span className="font-pixel text-amber-400/50 animate-pulse text-xs">카드의 메시지를 읽는 중...</span>
+              <div className="flex flex-col items-center gap-4 py-12">
+                <div
+                  className="w-14 h-14 rounded-full border-2 border-amber-500/40 bg-amber-500/10 flex items-center justify-center text-2xl avatar-ring-gold"
+                >
+                  ✦
+                </div>
+                <p className="text-amber-400/60 text-sm italic text-center">
+                  "별들이 이야기를 나누고 있습니다…<br />
+                  <span className="text-[11px]">Les étoiles murmurent leurs secrets.</span>"
+                </p>
+                <div className="dot-bounce text-amber-400/40 text-lg">
+                  <span>·</span><span>·</span><span>·</span>
+                </div>
               </div>
             )}
 
-            {/* 스트리밍 텍스트 */}
             {streamText && (
               <div className="leading-relaxed">
                 {renderMarkdown(streamText)}
-                {!done && (
-                  <span className="inline-block w-2 h-4 bg-amber-400 animate-pulse ml-1 align-middle" />
-                )}
+                {!done && <span className="inline-block w-2 h-4 bg-amber-400 animate-pulse ml-1 align-middle" />}
               </div>
             )}
 
-            {/* 다시하기 */}
             {done && (
               <div className="mt-10 pt-6 border-t border-amber-500/15 text-center">
                 <button

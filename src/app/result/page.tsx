@@ -13,6 +13,14 @@ const ELEMENT_COLORS: Record<string, string> = {
   수: 'text-blue-400',
 };
 
+const ELEMENT_HEX: Record<string, string> = {
+  목: '#4ade80',
+  화: '#f87171',
+  토: '#facc15',
+  금: '#d1d5db',
+  수: '#60a5fa',
+};
+
 const ELEMENT_BG: Record<string, string> = {
   목: 'bg-green-400/10 border-green-400/30',
   화: 'bg-red-400/10 border-red-400/30',
@@ -20,6 +28,107 @@ const ELEMENT_BG: Record<string, string> = {
   금: 'bg-gray-400/10 border-gray-400/30',
   수: 'bg-blue-400/10 border-blue-400/30',
 };
+
+// 오행 레이더 차트 (SVG 오각형)
+function ElementRadarChart({ elements }: { elements: Record<string, number> }) {
+  const ORDER = ['목', '화', '토', '금', '수'];
+  const values = ORDER.map(k => elements[k] ?? 0);
+  const maxVal = 8;
+  const CX = 100, CY = 105, R = 68;
+  const N = 5;
+
+  const axisAngle = (i: number) => (i * 2 * Math.PI / N) - Math.PI / 2;
+
+  const axisPoint = (i: number, radius: number) => ({
+    x: CX + radius * Math.cos(axisAngle(i)),
+    y: CY + radius * Math.sin(axisAngle(i)),
+  });
+
+  const toPoints = (pts: { x: number; y: number }[]) =>
+    pts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+
+  // 배경 그리드 (25% ~ 100%)
+  const gridLevels = [0.25, 0.5, 0.75, 1];
+
+  // 데이터 폴리곤
+  const dataPoints = values.map((v, i) => {
+    const ratio = Math.max(0.08, v / maxVal);
+    return axisPoint(i, R * ratio);
+  });
+
+  // 레이블 위치 (바깥쪽)
+  const labelPoints = ORDER.map((_, i) => axisPoint(i, R + 20));
+
+  return (
+    <svg width="200" height="210" viewBox="0 0 200 210" className="overflow-visible">
+      {/* 배경 그리드 */}
+      {gridLevels.map(ratio => {
+        const pts = ORDER.map((_, i) => axisPoint(i, R * ratio));
+        return (
+          <polygon
+            key={ratio}
+            points={toPoints(pts)}
+            fill="none"
+            stroke="rgba(124,58,237,0.15)"
+            strokeWidth="1"
+          />
+        );
+      })}
+
+      {/* 축선 */}
+      {ORDER.map((_, i) => {
+        const end = axisPoint(i, R);
+        return (
+          <line
+            key={i}
+            x1={CX} y1={CY}
+            x2={end.x.toFixed(1)} y2={end.y.toFixed(1)}
+            stroke="rgba(124,58,237,0.2)"
+            strokeWidth="1"
+          />
+        );
+      })}
+
+      {/* 데이터 폴리곤 */}
+      <polygon
+        points={toPoints(dataPoints)}
+        fill="rgba(124,58,237,0.25)"
+        stroke="#7C3AED"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+
+      {/* 데이터 포인트 */}
+      {dataPoints.map((p, i) => (
+        <circle
+          key={i}
+          cx={p.x.toFixed(1)}
+          cy={p.y.toFixed(1)}
+          r="4"
+          fill={ELEMENT_HEX[ORDER[i]]}
+          stroke="#0B1326"
+          strokeWidth="1.5"
+        />
+      ))}
+
+      {/* 레이블 */}
+      {labelPoints.map((p, i) => (
+        <text
+          key={i}
+          x={p.x.toFixed(1)}
+          y={p.y.toFixed(1)}
+          textAnchor="middle"
+          dominantBaseline="middle"
+          fontSize="11"
+          fontWeight="700"
+          fill={ELEMENT_HEX[ORDER[i]]}
+        >
+          {ORDER[i]}{values[i]}
+        </text>
+      ))}
+    </svg>
+  );
+}
 
 function PillarCard({ pillar, label }: { pillar: SajuResult['year']; label: string }) {
   return (
@@ -52,8 +161,7 @@ function renderMarkdown(text: string) {
     const t = line.trim();
     if (t.startsWith('## '))
       return <h2 key={i} className="text-violet-400 font-serif-kr text-base font-semibold mt-8 mb-3 pb-2 border-b border-violet-500/20 first:mt-0">{t.slice(3)}</h2>;
-    if (t === '')
-      return <div key={i} className="h-1.5" />;
+    if (t === '') return <div key={i} className="h-1.5" />;
     const parts = t.split(/(\*\*[^*]+\*\*)/g);
     return (
       <p key={i} className="text-[#E8E4F0]/75 text-sm leading-[1.85] my-0.5">
@@ -66,6 +174,13 @@ function renderMarkdown(text: string) {
     );
   });
 }
+
+// 박진인 로딩 메시지 (순환)
+const BJAKJININ_MSGS = [
+  '천지인(天地人)의 기운을 살피는 중이오…',
+  '팔자의 결을 읽고 있사오니 잠시 기다리시게…',
+  '하늘의 뜻을 헤아리는 중이옵니다…',
+];
 
 function ResultContent() {
   const searchParams = useSearchParams();
@@ -89,12 +204,19 @@ function ResultContent() {
   const [streaming,  setStreaming]  = useState(false);
   const [done,       setDone]       = useState(false);
   const [error,      setError]      = useState('');
-  const calledRef = useRef(false);
+  const [msgIdx,     setMsgIdx]     = useState(0);
+  const calledRef  = useRef(false);
+  const msgTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (calledRef.current || !saju) return;
     calledRef.current = true;
     setStreaming(true);
+
+    // 로딩 메시지 순환
+    msgTimerRef.current = setInterval(() => {
+      setMsgIdx(prev => (prev + 1) % BJAKJININ_MSGS.length);
+    }, 2000);
 
     (async () => {
       try {
@@ -120,8 +242,13 @@ function ResultContent() {
         setError('네트워크 오류가 발생했습니다.');
       } finally {
         setStreaming(false);
+        if (msgTimerRef.current) clearInterval(msgTimerRef.current);
       }
     })();
+
+    return () => {
+      if (msgTimerRef.current) clearInterval(msgTimerRef.current);
+    };
   }, [saju]);
 
   if (!saju) {
@@ -157,6 +284,7 @@ function ResultContent() {
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-10">
+
         {/* 사주팔자 */}
         <div className="mb-8">
           <div className="text-violet-400/40 text-[10px] font-pixel tracking-[0.3em] mb-4">// 사주팔자</div>
@@ -181,28 +309,64 @@ function ResultContent() {
             )}
           </div>
 
-          {/* 오행 분포 */}
+          {/* 오행 레이더 차트 */}
           <div className="border border-violet-500/15 bg-violet-600/8 p-4">
             <div className="text-violet-400/40 text-[10px] font-pixel mb-3">오행 분포</div>
-            <div className="flex gap-5">
-              {Object.entries(saju.elements).map(([el, count]) => (
-                <div key={el} className="flex flex-col items-center gap-1">
-                  <span className={`text-xl font-bold ${ELEMENT_COLORS[el]}`}>{count}</span>
-                  <span className={`text-xs ${ELEMENT_COLORS[el]}`}>{el}</span>
-                </div>
-              ))}
+            <div className="flex items-center gap-6 flex-wrap">
+              <ElementRadarChart elements={saju.elements} />
+              <div className="flex flex-col gap-2">
+                {Object.entries(saju.elements).map(([el, count]) => (
+                  <div key={el} className="flex items-center gap-2">
+                    <div
+                      className="w-2 h-2 rounded-full"
+                      style={{ background: ELEMENT_HEX[el] }}
+                    />
+                    <span className={`text-sm font-bold ${ELEMENT_COLORS[el]}`}>{el}</span>
+                    <div className="flex gap-0.5">
+                      {Array.from({ length: count }).map((_, i) => (
+                        <div
+                          key={i}
+                          className="w-3 h-3 rounded-sm"
+                          style={{ background: ELEMENT_HEX[el] + '80' }}
+                        />
+                      ))}
+                      {count === 0 && (
+                        <span className="text-[#E8E4F0]/25 text-xs">없음</span>
+                      )}
+                    </div>
+                    <span className={`text-xs ${ELEMENT_COLORS[el]} opacity-60`}>{count}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* AI 분석 */}
+        {/* AI 분석 — 박진인 */}
         <div>
-          <div className="text-violet-400/40 text-[10px] font-pixel tracking-[0.3em] mb-5">// AI 분석</div>
+          <div className="text-violet-400/40 text-[10px] font-pixel tracking-[0.3em] mb-5">// AI 분석 by 박진인</div>
 
+          {/* 로딩 — 박진인 캐릭터 */}
           {!streamText && streaming && (
-            <div className="flex items-center gap-3 text-[#E8E4F0]/40 text-sm py-6">
-              <div className="w-4 h-4 border border-violet-400/30 border-t-violet-400 rounded-full animate-spin shrink-0" />
-              <span className="font-pixel text-violet-400/50 animate-pulse text-xs">AI가 사주를 분석하는 중...</span>
+            <div className="flex flex-col items-center gap-5 py-12">
+              <div
+                className="w-16 h-16 rounded-full border-2 border-violet-500/50 bg-violet-600/15 flex items-center justify-center text-3xl font-serif-kr font-bold text-violet-400 avatar-ring-violet"
+                style={{ textShadow: '0 0 12px rgba(124,58,237,0.8)' }}
+              >
+                仙
+              </div>
+              <div className="text-center">
+                <div className="text-violet-400/50 text-[11px] font-pixel mb-2">박진인 朴眞人</div>
+                <p
+                  className="text-[#E8E4F0]/60 text-sm italic transition-all duration-500"
+                  key={msgIdx}
+                >
+                  "{BJAKJININ_MSGS[msgIdx]}"
+                </p>
+              </div>
+              <div className="dot-bounce text-violet-400/40 text-lg">
+                <span>·</span><span>·</span><span>·</span>
+              </div>
             </div>
           )}
 
