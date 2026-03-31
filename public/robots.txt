@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# 운세 에이전트 — AI 사주·타로·꿈해몽
+Sitemap: https://your-domain.com/sitemap.xml

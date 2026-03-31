@@ -1,0 +1,46 @@
+<svg viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1e0f4a"/>
+      <stop offset="100%" stop-color="#0B1326"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#7C3AED" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#7C3AED" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="180" height="180" rx="38" fill="url(#bg)"/>
+
+  <!-- 글로우 -->
+  <circle cx="90" cy="90" r="78" fill="url(#glow)"/>
+
+  <!-- 바깥 링 -->
+  <circle cx="90" cy="90" r="76" fill="none" stroke="#7C3AED" stroke-width="3" opacity="0.65"/>
+
+  <!-- 안쪽 링 -->
+  <circle cx="90" cy="90" r="56" fill="none" stroke="#A78BFA" stroke-width="1.5" opacity="0.35"/>
+
+  <!-- ✦ 사각별 세로 -->
+  <polygon points="90,28 101,82 90,136 79,82" fill="#C4B5FD" opacity="0.92"/>
+  <!-- ✦ 사각별 가로 -->
+  <polygon points="28,90 82,79 152,90 82,101" fill="#C4B5FD" opacity="0.92"/>
+
+  <!-- 중심 원 -->
+  <circle cx="90" cy="90" r="13" fill="#EDE9FE"/>
+  <circle cx="90" cy="90" r="8" fill="#7C3AED"/>
+  <circle cx="90" cy="90" r="4" fill="#DDD6FE"/>
+
+  <!-- 대각 장식 점 -->
+  <circle cx="55" cy="55" r="4" fill="#A78BFA" opacity="0.55"/>
+  <circle cx="125" cy="55" r="4" fill="#A78BFA" opacity="0.55"/>
+  <circle cx="55" cy="125" r="4" fill="#A78BFA" opacity="0.55"/>
+  <circle cx="125" cy="125" r="4" fill="#A78BFA" opacity="0.55"/>
+
+  <!-- 미니 별 8개 -->
+  <circle cx="90" cy="18" r="2" fill="#C4B5FD" opacity="0.5"/>
+  <circle cx="90" cy="162" r="2" fill="#C4B5FD" opacity="0.5"/>
+  <circle cx="18" cy="90" r="2" fill="#C4B5FD" opacity="0.5"/>
+  <circle cx="162" cy="90" r="2" fill="#C4B5FD" opacity="0.5"/>
+</svg>
