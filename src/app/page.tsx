@@ -136,7 +136,11 @@ export default function HomePage() {
         {/* 헤더 */}
         <header className="flex justify-between items-center px-6 md:px-10 py-6 border-b border-violet-500/10">
           <div className="flex items-center gap-3">
-            <span className="font-serif-kr text-white text-lg font-semibold tracking-wide">운세 에이전트</span>
+            <div className="flex items-center gap-2">
+              <span className="text-violet-400 text-base" style={{ textShadow: '0 0 12px rgba(124,58,237,0.8)' }}>✦</span>
+              <span className="font-serif-kr text-white text-lg font-semibold tracking-wide">혜안</span>
+              <span className="text-violet-400/70 text-xs font-light tracking-[0.2em]">HYEAN</span>
+            </div>
             <span className="hidden sm:block text-[10px] font-pixel text-violet-400/60 border border-violet-500/20 px-2 py-0.5">AI FORTUNE</span>
           </div>
           <nav className="flex items-center gap-5">
@@ -148,6 +152,15 @@ export default function HomePage() {
 
         {/* 히어로 */}
         <section className="text-center px-6 pt-16 pb-12">
+          {/* 브랜드 로고 */}
+          <div className="flex flex-col items-center mb-6">
+            <div className="relative mb-2">
+              <div className="absolute inset-0 rounded-full blur-2xl opacity-60" style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.5) 0%, transparent 70%)' }} />
+              <span className="relative text-4xl" style={{ color: '#A78BFA', textShadow: '0 0 24px rgba(124,58,237,0.9)' }}>✦</span>
+            </div>
+            <div className="font-serif-kr text-5xl md:text-6xl font-bold text-white" style={{ textShadow: '0 0 30px rgba(124,58,237,0.5)' }}>혜안</div>
+            <div className="text-violet-400/80 text-sm font-light tracking-[0.45em] mt-1">HYEAN</div>
+          </div>
           <div className="inline-flex items-center gap-2 px-3 py-1.5 border border-violet-500/30 rounded-full text-violet-400/80 text-xs mb-8 bg-violet-600/10 font-pixel">
             <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse shrink-0" />
             AI 기반 통합 운세 서비스
