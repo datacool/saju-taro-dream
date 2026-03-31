@@ -1,6 +1,8 @@
 import { MetadataRoute } from 'next';
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://your-domain.com';
+const BASE_URL =
+  process.env.NEXT_PUBLIC_BASE_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://saju-taro-dream.vercel.app');
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
