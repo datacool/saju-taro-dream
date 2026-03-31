@@ -2,8 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 const BASE_URL =
-  process.env.NEXT_PUBLIC_BASE_URL ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://saju-taro-dream.vercel.app');
+  process.env.NEXT_PUBLIC_BASE_URL ?? 'https://saju-taro-dream.vercel.app';
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
