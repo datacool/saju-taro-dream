@@ -1,11 +1,40 @@
 import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
-export const alt = '운세 에이전트 — AI 사주·타로·꿈해몽';
+export const alt = '혜안(HYEAN) — AI 사주·타로·꿈해몽';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
-export default function OGImage() {
+async function loadGoogleFont(text: string) {
+  const url = `https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&text=${encodeURIComponent(text)}`;
+  const css = await fetch(url, {
+    headers: {
+      'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    },
+  }).then((r) => r.text());
+
+  const match = css.match(/src:\s*url\(([^)]+)\)\s*format\(['"]?(woff2|opentype|truetype)['"]?\)/);
+  if (!match) throw new Error('Font URL not found in CSS');
+  return fetch(match[1]).then((r) => r.arrayBuffer());
+}
+
+export default async function OGImage() {
+  const ALL_TEXT = '혜안사주타로꿈해몽당신의운명을AI기반통합운세서비스읽습니다';
+
+  let fontData: ArrayBuffer | null = null;
+  try {
+    fontData = await loadGoogleFont(ALL_TEXT);
+  } catch {
+    // 폰트 로드 실패 시 영문만 표시
+  }
+
+  const fonts: ConstructorParameters<typeof ImageResponse>[1]['fonts'] = fontData
+    ? [{ name: 'NotoSansKR', data: fontData, weight: 700, style: 'normal' }]
+    : [];
+
+  const fontFamily = fontData ? 'NotoSansKR, serif' : 'serif';
+
   return new ImageResponse(
     (
       <div
@@ -17,7 +46,7 @@ export default function OGImage() {
           alignItems: 'center',
           justifyContent: 'center',
           background: 'linear-gradient(135deg, #0B1326 0%, #1a0b3d 50%, #0B1326 100%)',
-          fontFamily: 'serif',
+          fontFamily,
           position: 'relative',
           overflow: 'hidden',
         }}
@@ -56,61 +85,26 @@ export default function OGImage() {
         />
 
         {/* 링 */}
-        <div
-          style={{
-            position: 'absolute',
-            width: 320,
-            height: 320,
-            borderRadius: '50%',
-            border: '1px solid rgba(124,58,237,0.4)',
-          }}
-        />
-        <div
-          style={{
-            position: 'absolute',
-            width: 240,
-            height: 240,
-            borderRadius: '50%',
-            border: '1px solid rgba(167,139,250,0.25)',
-          }}
-        />
+        <div style={{ position: 'absolute', width: 320, height: 320, borderRadius: '50%', border: '1px solid rgba(124,58,237,0.4)' }} />
+        <div style={{ position: 'absolute', width: 240, height: 240, borderRadius: '50%', border: '1px solid rgba(167,139,250,0.25)' }} />
 
         {/* 심볼 ✦ */}
-        <div
-          style={{
-            fontSize: 72,
-            color: '#A78BFA',
-            marginBottom: 16,
-            lineHeight: 1,
-            textShadow: '0 0 30px rgba(124,58,237,0.8)',
-          }}
-        >
+        <div style={{ fontSize: 60, color: '#A78BFA', marginBottom: 16, lineHeight: 1, textShadow: '0 0 30px rgba(124,58,237,0.8)' }}>
           ✦
         </div>
 
-        {/* 서비스명 */}
-        <div
-          style={{
-            fontSize: 64,
-            fontWeight: 700,
-            color: '#FFFFFF',
-            letterSpacing: '-0.02em',
-            marginBottom: 12,
-            textShadow: '0 0 40px rgba(124,58,237,0.5)',
-          }}
-        >
-          운세 에이전트
+        {/* 브랜드명 한글 */}
+        <div style={{ fontSize: 80, fontWeight: 700, color: '#FFFFFF', letterSpacing: '-0.02em', marginBottom: 4, textShadow: '0 0 40px rgba(124,58,237,0.6)', fontFamily }}>
+          혜안
+        </div>
+
+        {/* 브랜드명 영문 */}
+        <div style={{ fontSize: 32, fontWeight: 400, color: '#A78BFA', letterSpacing: '0.35em', marginBottom: 20 }}>
+          HYEAN
         </div>
 
         {/* 부제목 */}
-        <div
-          style={{
-            fontSize: 28,
-            color: 'rgba(232,228,240,0.65)',
-            letterSpacing: '0.05em',
-            marginBottom: 40,
-          }}
-        >
+        <div style={{ fontSize: 24, color: 'rgba(232,228,240,0.55)', letterSpacing: '0.08em', marginBottom: 40, fontFamily }}>
           AI 사주 · 타로 · 꿈해몽
         </div>
 
@@ -134,25 +128,17 @@ export default function OGImage() {
               }}
             >
               <span style={{ fontSize: 22, color }}>{symbol}</span>
-              <span style={{ fontSize: 20, color: 'rgba(232,228,240,0.8)' }}>{label}</span>
+              <span style={{ fontSize: 20, color: 'rgba(232,228,240,0.8)', fontFamily }}>{label}</span>
             </div>
           ))}
         </div>
 
         {/* 하단 태그라인 */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 36,
-            fontSize: 18,
-            color: 'rgba(232,228,240,0.3)',
-            letterSpacing: '0.15em',
-          }}
-        >
+        <div style={{ position: 'absolute', bottom: 36, fontSize: 18, color: 'rgba(232,228,240,0.3)', letterSpacing: '0.15em', fontFamily }}>
           당신의 운명을 AI가 읽습니다
         </div>
       </div>
     ),
-    { ...size },
+    { ...size, fonts },
   );
 }
