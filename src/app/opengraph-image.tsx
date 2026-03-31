@@ -20,13 +20,13 @@ async function loadGoogleFont(text: string) {
 }
 
 export default async function OGImage() {
-  const ALL_TEXT = '혜안사주타로꿈해몽당신의운명을AI기반통합운세서비스읽습니다';
+  const ALL_TEXT = '仙혜안사주타로꿈해몽당신의운명을AI기반통합운세서비스읽습니다';
 
   let fontData: ArrayBuffer | null = null;
   try {
     fontData = await loadGoogleFont(ALL_TEXT);
   } catch {
-    // 폰트 로드 실패 시 영문만 표시
+    // fallback: no Korean font
   }
 
   const fonts: ConstructorParameters<typeof ImageResponse>[1]['fonts'] = fontData
@@ -74,28 +74,25 @@ export default async function OGImage() {
         ))}
 
         {/* 중앙 글로우 */}
-        <div
-          style={{
-            position: 'absolute',
-            width: 500,
-            height: 500,
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(124,58,237,0.25) 0%, transparent 70%)',
-          }}
-        />
+        <div style={{ position: 'absolute', width: 500, height: 500, borderRadius: '50%', background: 'radial-gradient(circle, rgba(124,58,237,0.25) 0%, transparent 70%)' }} />
 
         {/* 링 */}
         <div style={{ position: 'absolute', width: 320, height: 320, borderRadius: '50%', border: '1px solid rgba(124,58,237,0.4)' }} />
         <div style={{ position: 'absolute', width: 240, height: 240, borderRadius: '50%', border: '1px solid rgba(167,139,250,0.25)' }} />
 
-        {/* 심볼 ✦ — CSS로 렌더링 (유니코드 폰트 의존 제거) */}
-        <div style={{ position: 'relative', width: 64, height: 64, marginBottom: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ position: 'absolute', width: 8, height: 64, background: '#A78BFA', borderRadius: 4, boxShadow: '0 0 20px rgba(124,58,237,0.9)' }} />
-          <div style={{ position: 'absolute', width: 8, height: 64, background: '#A78BFA', borderRadius: 4, transform: 'rotate(90deg)', boxShadow: '0 0 20px rgba(124,58,237,0.9)' }} />
-          <div style={{ position: 'absolute', width: 4, height: 46, background: '#A78BFA', borderRadius: 4, transform: 'rotate(45deg)', opacity: 0.7 }} />
-          <div style={{ position: 'absolute', width: 4, height: 46, background: '#A78BFA', borderRadius: 4, transform: 'rotate(135deg)', opacity: 0.7 }} />
-          <div style={{ position: 'absolute', width: 10, height: 10, borderRadius: '50%', background: '#EDE9FE' }} />
-        </div>
+        {/* 심볼 ✦ — SVG 4각별 */}
+        <svg
+          width="64"
+          height="64"
+          viewBox="0 0 64 64"
+          style={{ marginBottom: 16 }}
+        >
+          <polygon
+            points="32,2 37,27 62,32 37,37 32,62 27,37 2,32 27,27"
+            fill="#A78BFA"
+          />
+          <circle cx="32" cy="32" r="5" fill="#EDE9FE" />
+        </svg>
 
         {/* 브랜드명 한글 */}
         <div style={{ fontSize: 80, fontWeight: 700, color: '#FFFFFF', letterSpacing: '-0.02em', marginBottom: 4, textShadow: '0 0 40px rgba(124,58,237,0.6)', fontFamily }}>
@@ -114,27 +111,25 @@ export default async function OGImage() {
 
         {/* 3 서비스 배지 */}
         <div style={{ display: 'flex', gap: 20 }}>
-          {[
-            { symbol: '仙', label: '사주', color: '#7C3AED' },
-            { symbol: '★', label: '타로', color: '#D97706' },
-            { symbol: '☽', label: '꿈해몽', color: '#3B82F6' },
-          ].map(({ symbol, label, color }) => (
-            <div
-              key={label}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 10,
-                padding: '10px 24px',
-                border: `1px solid ${color}60`,
-                borderRadius: 4,
-                background: `${color}18`,
-              }}
-            >
-              <span style={{ fontSize: 22, color }}>{symbol}</span>
-              <span style={{ fontSize: 20, color: 'rgba(232,228,240,0.8)', fontFamily }}>{label}</span>
-            </div>
-          ))}
+          {/* 사주 */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 24px', border: '1px solid rgba(124,58,237,0.38)', borderRadius: 4, background: 'rgba(124,58,237,0.1)' }}>
+            <span style={{ fontSize: 22, color: '#7C3AED', fontFamily }}>仙</span>
+            <span style={{ fontSize: 20, color: 'rgba(232,228,240,0.8)', fontFamily }}>사주</span>
+          </div>
+          {/* 타로 — SVG 다이아몬드 */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 24px', border: '1px solid rgba(217,119,6,0.38)', borderRadius: 4, background: 'rgba(217,119,6,0.1)' }}>
+            <svg width="22" height="22" viewBox="0 0 22 22">
+              <polygon points="11,1 21,11 11,21 1,11" fill="#D97706" />
+            </svg>
+            <span style={{ fontSize: 20, color: 'rgba(232,228,240,0.8)', fontFamily }}>타로</span>
+          </div>
+          {/* 꿈해몽 — SVG 초승달 */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 24px', border: '1px solid rgba(59,130,246,0.38)', borderRadius: 4, background: 'rgba(59,130,246,0.1)' }}>
+            <svg width="22" height="22" viewBox="0 0 22 22">
+              <path d="M11,2 A10,10,0,1,0,11,20 A8,8,0,1,1,11,2 Z" fill="#3B82F6" />
+            </svg>
+            <span style={{ fontSize: 20, color: 'rgba(232,228,240,0.8)', fontFamily }}>꿈해몽</span>
+          </div>
         </div>
 
         {/* 하단 태그라인 */}
