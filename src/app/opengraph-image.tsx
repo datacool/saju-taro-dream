@@ -88,9 +88,13 @@ export default async function OGImage() {
         <div style={{ position: 'absolute', width: 320, height: 320, borderRadius: '50%', border: '1px solid rgba(124,58,237,0.4)' }} />
         <div style={{ position: 'absolute', width: 240, height: 240, borderRadius: '50%', border: '1px solid rgba(167,139,250,0.25)' }} />
 
-        {/* 심볼 ✦ */}
-        <div style={{ fontSize: 60, color: '#A78BFA', marginBottom: 16, lineHeight: 1, textShadow: '0 0 30px rgba(124,58,237,0.8)' }}>
-          ✦
+        {/* 심볼 ✦ — CSS로 렌더링 (유니코드 폰트 의존 제거) */}
+        <div style={{ position: 'relative', width: 64, height: 64, marginBottom: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ position: 'absolute', width: 8, height: 64, background: '#A78BFA', borderRadius: 4, boxShadow: '0 0 20px rgba(124,58,237,0.9)' }} />
+          <div style={{ position: 'absolute', width: 8, height: 64, background: '#A78BFA', borderRadius: 4, transform: 'rotate(90deg)', boxShadow: '0 0 20px rgba(124,58,237,0.9)' }} />
+          <div style={{ position: 'absolute', width: 4, height: 46, background: '#A78BFA', borderRadius: 4, transform: 'rotate(45deg)', opacity: 0.7 }} />
+          <div style={{ position: 'absolute', width: 4, height: 46, background: '#A78BFA', borderRadius: 4, transform: 'rotate(135deg)', opacity: 0.7 }} />
+          <div style={{ position: 'absolute', width: 10, height: 10, borderRadius: '50%', background: '#EDE9FE' }} />
         </div>
 
         {/* 브랜드명 한글 */}
@@ -112,7 +116,7 @@ export default async function OGImage() {
         <div style={{ display: 'flex', gap: 20 }}>
           {[
             { symbol: '仙', label: '사주', color: '#7C3AED' },
-            { symbol: '✦', label: '타로', color: '#D97706' },
+            { symbol: '★', label: '타로', color: '#D97706' },
             { symbol: '☽', label: '꿈해몽', color: '#3B82F6' },
           ].map(({ symbol, label, color }) => (
             <div
