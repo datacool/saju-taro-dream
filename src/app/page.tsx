@@ -32,8 +32,8 @@ const SERVICES = [
     borderClass: 'border-violet-500/30',
     bgClass: 'bg-violet-600/10',
     badgeClass: 'border-violet-500/30 bg-violet-600/10 text-violet-300',
-    btnClass: 'bg-violet-600 text-white border border-violet-600 hover:bg-transparent hover:text-violet-400 transition-all duration-200',
-    btnOutlineClass: 'border border-violet-500/60 text-violet-400 hover:bg-violet-600 hover:text-white hover:border-violet-600 transition-all duration-200',
+    btnClass: 'bg-transparent text-violet-400 border border-violet-500/70 hover:bg-violet-600 hover:text-white hover:border-violet-600 transition-all duration-200',
+    btnOutlineClass: 'bg-transparent text-violet-400 border border-violet-500/70 hover:bg-violet-600 hover:text-white hover:border-violet-600 transition-all duration-200',
     avatarRing: 'avatar-ring-violet',
   },
   {
@@ -52,8 +52,8 @@ const SERVICES = [
     borderClass: 'border-amber-500/30',
     bgClass: 'bg-amber-500/10',
     badgeClass: 'border-amber-500/30 bg-amber-500/10 text-amber-300',
-    btnClass: 'bg-amber-500 text-black border border-amber-500 hover:bg-transparent hover:text-amber-400 transition-all duration-200',
-    btnOutlineClass: 'border border-amber-500/60 text-amber-400 hover:bg-amber-500 hover:text-black hover:border-amber-500 transition-all duration-200',
+    btnClass: 'bg-transparent text-amber-400 border border-amber-500/70 hover:bg-amber-500 hover:text-black hover:border-amber-500 transition-all duration-200',
+    btnOutlineClass: 'bg-transparent text-amber-400 border border-amber-500/70 hover:bg-amber-500 hover:text-black hover:border-amber-500 transition-all duration-200',
     avatarRing: 'avatar-ring-gold',
   },
   {
@@ -72,8 +72,8 @@ const SERVICES = [
     borderClass: 'border-blue-500/30',
     bgClass: 'bg-blue-500/10',
     badgeClass: 'border-blue-500/30 bg-blue-500/10 text-blue-300',
-    btnClass: 'bg-blue-600 text-white border border-blue-600 hover:bg-transparent hover:text-blue-400 transition-all duration-200',
-    btnOutlineClass: 'border border-blue-500/60 text-blue-400 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all duration-200',
+    btnClass: 'bg-transparent text-blue-400 border border-blue-500/70 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all duration-200',
+    btnOutlineClass: 'bg-transparent text-blue-400 border border-blue-500/70 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all duration-200',
     avatarRing: 'avatar-ring-blue',
   },
 ];
