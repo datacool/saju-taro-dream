@@ -32,8 +32,8 @@ const SERVICES = [
     borderClass: 'border-violet-500/30',
     bgClass: 'bg-violet-600/10',
     badgeClass: 'border-violet-500/30 bg-violet-600/10 text-violet-300',
-    btnClass: 'bg-violet-600 hover:bg-violet-500 text-white',
-    btnOutlineClass: 'border-violet-500/40 text-violet-400 hover:border-violet-400 hover:bg-violet-600/10',
+    btnClass: 'bg-violet-600 text-white border border-violet-600 hover:bg-transparent hover:text-violet-400 transition-all duration-200',
+    btnOutlineClass: 'border border-violet-500/60 text-violet-400 hover:bg-violet-600 hover:text-white hover:border-violet-600 transition-all duration-200',
     avatarRing: 'avatar-ring-violet',
   },
   {
@@ -52,8 +52,8 @@ const SERVICES = [
     borderClass: 'border-amber-500/30',
     bgClass: 'bg-amber-500/10',
     badgeClass: 'border-amber-500/30 bg-amber-500/10 text-amber-300',
-    btnClass: 'bg-amber-500 hover:bg-amber-400 text-black',
-    btnOutlineClass: 'border-amber-500/40 text-amber-400 hover:border-amber-400 hover:bg-amber-500/10',
+    btnClass: 'bg-amber-500 text-black border border-amber-500 hover:bg-transparent hover:text-amber-400 transition-all duration-200',
+    btnOutlineClass: 'border border-amber-500/60 text-amber-400 hover:bg-amber-500 hover:text-black hover:border-amber-500 transition-all duration-200',
     avatarRing: 'avatar-ring-gold',
   },
   {
@@ -72,8 +72,8 @@ const SERVICES = [
     borderClass: 'border-blue-500/30',
     bgClass: 'bg-blue-500/10',
     badgeClass: 'border-blue-500/30 bg-blue-500/10 text-blue-300',
-    btnClass: 'bg-blue-600 hover:bg-blue-500 text-white',
-    btnOutlineClass: 'border-blue-500/40 text-blue-400 hover:border-blue-400 hover:bg-blue-500/10',
+    btnClass: 'bg-blue-600 text-white border border-blue-600 hover:bg-transparent hover:text-blue-400 transition-all duration-200',
+    btnOutlineClass: 'border border-blue-500/60 text-blue-400 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all duration-200',
     avatarRing: 'avatar-ring-blue',
   },
 ];
@@ -211,11 +211,11 @@ export default function HomePage() {
                 <div className="flex flex-wrap gap-1.5 mb-6">
                   {svc.tags.map(tag => <span key={tag} className={`text-xs px-2 py-0.5 border ${svc.badgeClass}`}>{tag}</span>)}
                 </div>
-                <Link href={svc.href} className={`block w-full text-center py-3 text-base font-medium transition-colors ${svc.btnClass}`}>
-                  {svc.id==='saju' ? '사주 분석 시작' : svc.id==='tarot' ? '타로 카드 보기' : '꿈 해석하기'}
+                <Link href={svc.href} className={`block w-full text-center py-3 text-base font-medium ${svc.btnClass}`}>
+                  {svc.id==='saju' ? '사주 분석' : svc.id==='tarot' ? '타로 카드 보기' : '꿈 해석하기'}
                 </Link>
                 {svc.id==='saju' && (
-                  <Link href="/input?mode=daily" className={`block w-full text-center py-2.5 text-sm border transition-colors mt-2 ${svc.btnOutlineClass}`}>
+                  <Link href="/input?mode=daily" className={`block w-full text-center py-3 text-base font-medium mt-2 ${svc.btnOutlineClass}`}>
                     오늘의 운세
                   </Link>
                 )}
