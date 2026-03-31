@@ -77,16 +77,16 @@ function TarotCardDisplay({ card, flipped }: { card: DrawnCard; flipped: boolean
         </div>
         <div className={`card-back border ${suitColor.split(' ')[1]} ${suitColor.split(' ')[2]} flex flex-col p-3 h-full rounded-sm`}>
           <div className="flex justify-between items-start mb-2">
-            <span className={`text-[9px] px-1.5 py-0.5 border ${suitColor} rounded-sm`}>{SUIT_LABELS[card.suit]}</span>
-            {card.reversed && <span className="text-[9px] text-red-400/70 border border-red-500/30 px-1 py-0.5">역</span>}
+            <span className={`text-[11px] px-1.5 py-0.5 border ${suitColor} rounded-sm`}>{SUIT_LABELS[card.suit]}</span>
+            {card.reversed && <span className="text-[11px] text-red-400/70 border border-red-500/30 px-1 py-0.5">역</span>}
           </div>
           <div className={`text-3xl text-center my-2 ${suitColor.split(' ')[0]}`}>{card.symbol}</div>
           <div className="text-center mb-2">
-            <div className="text-white text-xs font-medium leading-tight">{card.nameKor}</div>
-            <div className="text-[#E8E4F0]/30 text-[9px] mt-0.5">{card.name}</div>
+            <div className="text-white text-sm font-medium leading-tight">{card.nameKor}</div>
+            <div className="text-[#E8E4F0]/30 text-[11px] mt-0.5">{card.name}</div>
           </div>
           <div className="flex flex-wrap gap-1 justify-center mt-auto">
-            {card.keywords.slice(0, 2).map(kw => <span key={kw} className="text-[9px] text-[#E8E4F0]/45">{kw}</span>)}
+            {card.keywords.slice(0, 2).map(kw => <span key={kw} className="text-[11px] text-[#E8E4F0]/45">{kw}</span>)}
           </div>
         </div>
       </div>
@@ -98,13 +98,13 @@ function renderMarkdown(text: string) {
   return text.replace(/\r\n/g, '\n').split('\n').map((line, i) => {
     const t = line.trim();
     if (t.startsWith('## '))
-      return <h2 key={i} className="text-amber-400 font-serif-kr text-base font-semibold mt-7 mb-3 pb-1.5 border-b border-amber-500/20 first:mt-0">{t.slice(3)}</h2>;
+      return <h2 key={i} className="text-amber-400 font-serif-kr text-lg font-semibold mt-7 mb-3 pb-1.5 border-b border-amber-500/20 first:mt-0">{t.slice(3)}</h2>;
     if (t.startsWith('### '))
-      return <h3 key={i} className="text-amber-300/80 text-sm font-medium mt-4 mb-2">{t.slice(4)}</h3>;
+      return <h3 key={i} className="text-amber-300/80 text-base font-medium mt-4 mb-2">{t.slice(4)}</h3>;
     if (t === '') return <div key={i} className="h-1.5" />;
     const parts = t.split(/(\*\*[^*]+\*\*)/g);
     return (
-      <p key={i} className="text-[#E8E4F0]/75 text-sm leading-[1.9] my-0.5">
+      <p key={i} className="text-[#E8E4F0]/75 text-base leading-[1.9] my-0.5">
         {parts.map((p, j) =>
           p.startsWith('**') && p.endsWith('**')
             ? <strong key={j} className="text-[#E8E4F0] font-medium">{p.slice(2,-2)}</strong>
@@ -242,15 +242,15 @@ export default function TarotPage() {
       <AchievementToast queue={achievementQueue} onDone={() => setAchievementQueue([])} />
 
       <header className="flex justify-between items-center px-6 py-5 border-b border-amber-500/15">
-        <Link href="/" className="font-serif-kr text-[#E8E4F0]/70 text-sm hover:text-[#E8E4F0] transition-colors">
+        <Link href="/" className="font-serif-kr text-[#E8E4F0]/70 text-base hover:text-[#E8E4F0] transition-colors">
           ← 운세 에이전트
         </Link>
         <div className="flex items-center gap-2">
           <span className="text-amber-400 text-lg glow-gold-sm">✦</span>
-          <span className="font-serif-kr text-[#E8E4F0]/80 text-sm">타로 리딩</span>
+          <span className="font-serif-kr text-[#E8E4F0]/80 text-base">타로 리딩</span>
         </div>
         {canReset ? (
-          <button onClick={handleReset} className="text-[10px] font-pixel text-[#E8E4F0]/40 hover:text-[#E8E4F0]/70 transition-colors">
+          <button onClick={handleReset} className="text-xs font-pixel text-[#E8E4F0]/40 hover:text-[#E8E4F0]/70 transition-colors">
             다시 뽑기
           </button>
         ) : (
@@ -266,33 +266,33 @@ export default function TarotPage() {
             <div className="text-center mb-10">
               <div className="w-20 h-20 rounded-full border-2 border-amber-500/40 bg-amber-500/10 flex items-center justify-center text-4xl mx-auto mb-4 avatar-ring-gold"
                 style={{ filter:'drop-shadow(0 0 12px rgba(255,185,95,0.4))' }}>✦</div>
-              <div className="text-amber-400/60 text-[11px] font-pixel mb-2">MADAME CÉLESTE</div>
-              <h1 className="font-serif-kr text-2xl text-white font-semibold mb-3">카드에게 물어보세요</h1>
-              <p className="text-[#E8E4F0]/45 text-sm leading-relaxed italic">
+              <div className="text-amber-400/60 text-xs font-pixel mb-2">MADAME CÉLESTE</div>
+              <h1 className="font-serif-kr text-3xl text-white font-semibold mb-3">카드에게 물어보세요</h1>
+              <p className="text-[#E8E4F0]/45 text-base leading-relaxed italic">
                 "Les étoiles vous attendent…<br />별들이 당신의 이야기를 듣고 있어요."
               </p>
             </div>
 
             <div className="border border-amber-500/20 bg-amber-500/5 p-6">
-              <label className="block text-xs text-amber-400/70 font-pixel mb-3 tracking-wider">// 고민 또는 질문</label>
+              <label className="block text-sm text-amber-400/70 font-pixel mb-3 tracking-wider">// 고민 또는 질문</label>
               <textarea value={question} onChange={e => setQuestion(e.target.value)}
                 placeholder="예) 지금 이직을 고려하고 있는데 어떻게 해야 할까요? / 이 관계는 어디로 흘러갈까요?"
                 rows={4}
-                className="w-full bg-transparent border border-amber-500/25 text-[#E8E4F0] text-sm px-4 py-3 resize-none focus:outline-none focus:border-amber-400 transition-colors placeholder:text-[#E8E4F0]/25 leading-relaxed"
+                className="w-full bg-transparent border border-amber-500/25 text-[#E8E4F0] text-base px-4 py-3 resize-none focus:outline-none focus:border-amber-400 transition-colors placeholder:text-[#E8E4F0]/25 leading-relaxed"
               />
-              <p className="text-[#E8E4F0]/30 text-xs mt-2">구체적일수록 더 정확한 해석을 받을 수 있습니다</p>
+              <p className="text-[#E8E4F0]/30 text-sm mt-2">구체적일수록 더 정확한 해석을 받을 수 있습니다</p>
             </div>
 
             <button onClick={handleDraw} disabled={!question.trim()}
-              className="w-full mt-4 py-4 bg-amber-500 hover:bg-amber-400 disabled:opacity-30 disabled:cursor-not-allowed text-black font-medium text-sm transition-colors">
+              className="w-full mt-4 py-4 bg-amber-500 hover:bg-amber-400 disabled:opacity-30 disabled:cursor-not-allowed text-black font-medium text-base transition-colors">
               카드 뽑기
             </button>
 
             <div className="mt-6 grid grid-cols-3 gap-3">
               {(['상황','조언','결과'] as const).map(pos => (
                 <div key={pos} className="border border-amber-500/15 bg-amber-500/5 p-3 text-center">
-                  <div className="text-amber-400/60 text-xs font-pixel mb-1">{pos}</div>
-                  <div className="text-[#E8E4F0]/40 text-[10px] leading-relaxed">{POSITION_DESC[pos]}</div>
+                  <div className="text-amber-400/60 text-sm font-pixel mb-1">{pos}</div>
+                  <div className="text-[#E8E4F0]/40 text-xs leading-relaxed">{POSITION_DESC[pos]}</div>
                 </div>
               ))}
             </div>
@@ -317,8 +317,8 @@ export default function TarotPage() {
             </div>
 
             <div className="text-center mb-8">
-              <div className="text-amber-400/60 text-[11px] font-pixel mb-3 tracking-widest">MADAME CÉLESTE</div>
-              <p className="text-[#E8E4F0]/70 text-sm italic mb-2">
+              <div className="text-amber-400/60 text-xs font-pixel mb-3 tracking-widest">MADAME CÉLESTE</div>
+              <p className="text-[#E8E4F0]/70 text-base italic mb-2">
                 "덱을 섞겠습니다. 마음을 비우고<br />직감에 귀 기울여 보세요."
               </p>
             </div>
@@ -326,7 +326,7 @@ export default function TarotPage() {
             {/* 직감 선택 */}
             {!intuition ? (
               <div className="text-center">
-                <p className="text-amber-400/50 text-xs font-pixel mb-4 tracking-wider">// 지금 끌리는 기호를 하나 고르세요</p>
+                <p className="text-amber-400/50 text-sm font-pixel mb-4 tracking-wider">// 지금 끌리는 기호를 하나 고르세요</p>
                 <div className="flex gap-4 justify-center">
                   {INTUITION_OPTIONS.map(opt => (
                     <button key={opt.symbol} onClick={() => handleIntuition(opt.symbol)}

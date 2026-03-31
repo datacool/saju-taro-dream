@@ -103,7 +103,7 @@ function ElementBar({ element, count, maxCount, progress }: { element: string; c
 function PillarCard({ pillar, label }: { pillar: SajuResult['year']; label: string }) {
   return (
     <div className="border border-violet-500/25 bg-violet-600/8 p-3 md:p-4 text-center flex-1">
-      <div className="text-violet-400/50 text-[10px] font-pixel mb-3">{label}</div>
+      <div className="text-violet-400/50 text-xs font-pixel mb-3">{label}</div>
       <div className="space-y-0.5">
         <div className="text-2xl md:text-3xl text-white font-bold font-serif-kr">{pillar.stemKor}</div>
         <div className="text-[#E8E4F0]/30 text-xs">{pillar.stemHanja}</div>
@@ -114,8 +114,8 @@ function PillarCard({ pillar, label }: { pillar: SajuResult['year']; label: stri
         <div className="text-[#E8E4F0]/30 text-xs">{pillar.branchHanja}</div>
       </div>
       <div className="mt-3 flex gap-1 justify-center flex-wrap">
-        <span className={`text-[10px] px-1.5 py-0.5 border ${ELEMENT_BG[pillar.stemElement]} ${ELEMENT_COLORS[pillar.stemElement]}`}>{pillar.stemElement}</span>
-        <span className={`text-[10px] px-1.5 py-0.5 border ${ELEMENT_BG[pillar.branchElement]} ${ELEMENT_COLORS[pillar.branchElement]}`}>{pillar.branchElement}</span>
+        <span className={`text-xs px-1.5 py-0.5 border ${ELEMENT_BG[pillar.stemElement]} ${ELEMENT_COLORS[pillar.stemElement]}`}>{pillar.stemElement}</span>
+        <span className={`text-xs px-1.5 py-0.5 border ${ELEMENT_BG[pillar.branchElement]} ${ELEMENT_COLORS[pillar.branchElement]}`}>{pillar.branchElement}</span>
       </div>
     </div>
   );
@@ -125,11 +125,11 @@ function renderMarkdown(text: string) {
   return text.replace(/\r\n/g, '\n').split('\n').map((line, i) => {
     const t = line.trim();
     if (t.startsWith('## '))
-      return <h2 key={i} className="text-violet-400 font-serif-kr text-base font-semibold mt-8 mb-3 pb-2 border-b border-violet-500/20 first:mt-0">{t.slice(3)}</h2>;
+      return <h2 key={i} className="text-violet-400 font-serif-kr text-lg font-semibold mt-8 mb-3 pb-2 border-b border-violet-500/20 first:mt-0">{t.slice(3)}</h2>;
     if (t === '') return <div key={i} className="h-1.5" />;
     const parts = t.split(/(\*\*[^*]+\*\*)/g);
     return (
-      <p key={i} className="text-[#E8E4F0]/75 text-sm leading-[1.85] my-0.5">
+      <p key={i} className="text-[#E8E4F0]/75 text-base leading-[1.9] my-0.5">
         {parts.map((p, j) =>
           p.startsWith('**') && p.endsWith('**')
             ? <strong key={j} className="text-[#E8E4F0] font-medium">{p.slice(2,-2)}</strong>
@@ -235,16 +235,16 @@ function ResultContent() {
       <AchievementToast queue={achievementQueue} onDone={() => setAchievementQueue([])} />
 
       <header className="flex justify-between items-center px-6 py-5 border-b border-violet-500/15">
-        <Link href="/" className="font-serif-kr text-[#E8E4F0]/70 text-sm hover:text-[#E8E4F0] transition-colors">← 운세 에이전트</Link>
-        <div className="text-xs text-[#E8E4F0]/40 font-pixel">{name}님의 {mode==='daily'?'오늘의 운세':'사주 분석'}</div>
-        <Link href={`/input?mode=${mode}`} className="text-xs text-[#E8E4F0]/35 hover:text-violet-400 transition-colors font-pixel">다시 분석</Link>
+        <Link href="/" className="font-serif-kr text-[#E8E4F0]/70 text-base hover:text-[#E8E4F0] transition-colors">← 운세 에이전트</Link>
+        <div className="text-sm text-[#E8E4F0]/40 font-pixel">{name}님의 {mode==='daily'?'오늘의 운세':'사주 분석'}</div>
+        <Link href={`/input?mode=${mode}`} className="text-sm text-[#E8E4F0]/35 hover:text-violet-400 transition-colors font-pixel">다시 분석</Link>
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-10">
 
         {/* 사주팔자 */}
         <div className="mb-8">
-          <div className="text-violet-400/40 text-[10px] font-pixel tracking-[0.3em] mb-4">// 사주팔자</div>
+          <div className="text-violet-400/40 text-xs font-pixel tracking-[0.3em] mb-4">// 사주팔자</div>
           <div className="flex gap-2 mb-4">
             <PillarCard pillar={saju.year}  label="년주 年柱" />
             <PillarCard pillar={saju.month} label="월주 月柱" />
@@ -259,7 +259,7 @@ function ResultContent() {
 
           {/* 오행 레이더 + 바 */}
           <div className="border border-violet-500/15 bg-violet-600/8 p-4">
-            <div className="text-violet-400/40 text-[10px] font-pixel mb-4">오행 분포</div>
+            <div className="text-violet-400/40 text-xs font-pixel mb-4">오행 분포</div>
             <div className="flex items-center gap-6 flex-wrap">
               <ElementRadarChart elements={saju.elements} />
               <div className="flex flex-col gap-2.5 flex-1 min-w-[120px]">
@@ -273,15 +273,15 @@ function ResultContent() {
 
         {/* AI 분석 — 박진인 */}
         <div>
-          <div className="text-violet-400/40 text-[10px] font-pixel tracking-[0.3em] mb-5">// AI 분석 by 박진인</div>
+          <div className="text-violet-400/40 text-xs font-pixel tracking-[0.3em] mb-5">// AI 분석 by 박진인</div>
 
           {!streamText && streaming && (
             <div className="flex flex-col items-center gap-5 py-12">
               <div className="w-16 h-16 rounded-full border-2 border-violet-500/50 bg-violet-600/15 flex items-center justify-center text-3xl font-serif-kr font-bold text-violet-400 avatar-ring-violet"
                 style={{ textShadow:'0 0 12px rgba(124,58,237,0.8)' }}>仙</div>
               <div className="text-center">
-                <div className="text-violet-400/50 text-[11px] font-pixel mb-2">박진인 朴眞人</div>
-                <p className="text-[#E8E4F0]/60 text-sm italic transition-opacity duration-500" key={msgIdx}>
+                <div className="text-violet-400/50 text-xs font-pixel mb-2">박진인 朴眞人</div>
+                <p className="text-[#E8E4F0]/60 text-base italic transition-opacity duration-500" key={msgIdx}>
                   "{BJAKJININ_MSGS[msgIdx]}"
                 </p>
               </div>

@@ -58,19 +58,19 @@ function InputForm() {
   const months = Array.from({ length: 12  }, (_, i) => i + 1);
   const days   = Array.from({ length: 31  }, (_, i) => i + 1);
 
-  const selectCls = 'bg-[#0B1326] border border-violet-500/25 text-[#E8E4F0] text-sm px-3 py-3 focus:outline-none focus:border-violet-400 transition-colors appearance-none';
-  const inputCls  = 'w-full bg-transparent border border-violet-500/25 text-[#E8E4F0] text-sm px-4 py-3 focus:outline-none focus:border-violet-400 transition-colors placeholder:text-[#E8E4F0]/25';
+  const selectCls = 'bg-[#0B1326] border border-violet-500/25 text-[#E8E4F0] text-base px-3 py-3 focus:outline-none focus:border-violet-400 transition-colors appearance-none';
+  const inputCls  = 'w-full bg-transparent border border-violet-500/25 text-[#E8E4F0] text-base px-4 py-3 focus:outline-none focus:border-violet-400 transition-colors placeholder:text-[#E8E4F0]/25';
 
   return (
     <div className="min-h-screen bg-[#0B1326] flex flex-col">
       {/* 헤더 */}
       <header className="flex justify-between items-center px-6 py-5 border-b border-violet-500/15">
-        <Link href="/" className="font-serif-kr text-[#E8E4F0]/70 text-sm hover:text-[#E8E4F0] transition-colors">
+        <Link href="/" className="font-serif-kr text-[#E8E4F0]/70 text-base hover:text-[#E8E4F0] transition-colors">
           ← 운세 에이전트
         </Link>
         <div className="flex items-center gap-2">
           <span className="text-violet-400 text-lg">☯</span>
-          <span className="font-serif-kr text-[#E8E4F0]/80 text-sm">
+          <span className="font-serif-kr text-[#E8E4F0]/80 text-base">
             {isDaily ? '오늘의 운세' : '사주 분석'}
           </span>
         </div>
@@ -81,13 +81,13 @@ function InputForm() {
       <main className="flex-1 flex items-center justify-center px-4 py-10">
         <div className="w-full max-w-md">
           <div className="mb-10 text-center">
-            <div className="text-[10px] font-pixel text-violet-400/50 tracking-[0.3em] mb-3">
+            <div className="text-xs font-pixel text-violet-400/50 tracking-[0.3em] mb-3">
               {isDaily ? '// TODAY FORTUNE' : '// SAJU ANALYSIS'}
             </div>
-            <h1 className="font-serif-kr text-2xl text-white font-semibold mb-2">
+            <h1 className="font-serif-kr text-3xl text-white font-semibold mb-2">
               {isDaily ? '오늘의 운세' : '사주 분석'}
             </h1>
-            <p className="text-[#E8E4F0]/40 text-xs">
+            <p className="text-[#E8E4F0]/40 text-sm">
               {isDaily
                 ? '오늘 하루의 운세를 AI가 분석해드립니다'
                 : '만세력 기반으로 사주팔자를 정확하게 분석합니다'}
@@ -97,7 +97,7 @@ function InputForm() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* 이름 */}
             <div>
-              <label className="block text-xs text-violet-400/70 font-pixel mb-2 tracking-wider">이름</label>
+              <label className="block text-sm text-violet-400/70 font-pixel mb-2 tracking-wider">이름</label>
               <input
                 type="text"
                 value={form.name}
@@ -110,14 +110,14 @@ function InputForm() {
 
             {/* 성별 */}
             <div>
-              <label className="block text-xs text-violet-400/70 font-pixel mb-2 tracking-wider">성별</label>
+              <label className="block text-sm text-violet-400/70 font-pixel mb-2 tracking-wider">성별</label>
               <div className="flex gap-3">
                 {[['male', '남성'], ['female', '여성']].map(([val, label]) => (
                   <button
                     key={val}
                     type="button"
                     onClick={() => set('gender', val)}
-                    className={`flex-1 py-3 text-sm border transition-colors ${
+                    className={`flex-1 py-3 text-base border transition-colors ${
                       form.gender === val
                         ? 'border-violet-400 bg-violet-600/20 text-violet-300'
                         : 'border-violet-500/20 text-[#E8E4F0]/40 hover:border-violet-500/50'
@@ -131,7 +131,7 @@ function InputForm() {
 
             {/* 생년월일 */}
             <div>
-              <label className="block text-xs text-violet-400/70 font-pixel mb-2 tracking-wider">생년월일</label>
+              <label className="block text-sm text-violet-400/70 font-pixel mb-2 tracking-wider">생년월일</label>
               <div className="grid grid-cols-3 gap-2">
                 <select value={form.year}  onChange={e => set('year',  e.target.value)} required className={selectCls}>
                   <option value="">년</option>
@@ -151,7 +151,7 @@ function InputForm() {
             {/* 태어난 시간 */}
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className="text-xs text-violet-400/70 font-pixel tracking-wider">태어난 시간</label>
+                <label className="text-sm text-violet-400/70 font-pixel tracking-wider">태어난 시간</label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
@@ -159,7 +159,7 @@ function InputForm() {
                     onChange={e => set('unknownTime', e.target.checked)}
                     className="accent-violet-400"
                   />
-                  <span className="text-xs text-[#E8E4F0]/40">모름</span>
+                  <span className="text-sm text-[#E8E4F0]/40">모름</span>
                 </label>
               </div>
               <select
@@ -173,13 +173,13 @@ function InputForm() {
                 ))}
               </select>
               {form.unknownTime && (
-                <p className="text-[#E8E4F0]/30 text-xs mt-1.5">시주는 낮 12시 기준으로 계산됩니다</p>
+                <p className="text-[#E8E4F0]/30 text-sm mt-1.5">시주는 낮 12시 기준으로 계산됩니다</p>
               )}
             </div>
 
             <button
               type="submit"
-              className="w-full py-4 bg-violet-600 hover:bg-violet-500 text-white font-medium text-sm transition-colors mt-6"
+              className="w-full py-4 bg-violet-600 hover:bg-violet-500 text-white font-medium text-base transition-colors mt-6"
             >
               {isDaily ? '오늘의 운세 분석하기' : '사주 분석 시작하기'}
             </button>

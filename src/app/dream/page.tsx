@@ -75,13 +75,13 @@ function renderMarkdown(text: string) {
   return text.replace(/\r\n/g, '\n').split('\n').map((line, i) => {
     const t = line.trim();
     if (t.startsWith('## '))
-      return <h2 key={i} className="text-blue-400 font-serif-kr text-base font-semibold mt-7 mb-3 pb-1.5 border-b border-blue-500/20 first:mt-0">{t.slice(3)}</h2>;
+      return <h2 key={i} className="text-blue-400 font-serif-kr text-lg font-semibold mt-7 mb-3 pb-1.5 border-b border-blue-500/20 first:mt-0">{t.slice(3)}</h2>;
     if (t.startsWith('### '))
-      return <h3 key={i} className="text-blue-300/80 text-sm font-medium mt-4 mb-2">{t.slice(4)}</h3>;
+      return <h3 key={i} className="text-blue-300/80 text-base font-medium mt-4 mb-2">{t.slice(4)}</h3>;
     if (t === '') return <div key={i} className="h-1.5" />;
     const parts = t.split(/(\*\*[^*]+\*\*)/g);
     return (
-      <p key={i} className="text-[#E8E4F0]/75 text-sm leading-[1.9] my-0.5">
+      <p key={i} className="text-[#E8E4F0]/75 text-base leading-[1.9] my-0.5">
         {parts.map((p, j) =>
           p.startsWith('**') && p.endsWith('**')
             ? <strong key={j} className="text-[#E8E4F0] font-medium">{p.slice(2, -2)}</strong>
@@ -233,20 +233,20 @@ export default function DreamPage() {
       )}
 
       <header className="flex justify-between items-center px-6 py-5 border-b border-blue-500/15">
-        <Link href="/" className="font-serif-kr text-[#E8E4F0]/70 text-sm hover:text-[#E8E4F0] transition-colors">
+        <Link href="/" className="font-serif-kr text-[#E8E4F0]/70 text-base hover:text-[#E8E4F0] transition-colors">
           ← 운세 에이전트
         </Link>
         <div className="flex items-center gap-2">
           <span className="text-blue-400 text-lg glow-blue-sm">☽</span>
-          <span className="font-serif-kr text-[#E8E4F0]/80 text-sm">꿈해몽</span>
+          <span className="font-serif-kr text-[#E8E4F0]/80 text-base">꿈해몽</span>
         </div>
         <div className="flex items-center gap-3">
           <button onClick={() => { setDiaryEntries(loadDiaryEntries()); setShowDiary(true); }}
-            className="text-[10px] font-pixel text-blue-400/50 hover:text-blue-400/80 transition-colors border border-blue-500/20 px-2 py-1">
+            className="text-xs font-pixel text-blue-400/50 hover:text-blue-400/80 transition-colors border border-blue-500/20 px-2 py-1">
             꿈 일기
           </button>
           {submitted && (
-            <button onClick={handleReset} className="text-[10px] font-pixel text-[#E8E4F0]/40 hover:text-[#E8E4F0]/70 transition-colors">
+            <button onClick={handleReset} className="text-xs font-pixel text-[#E8E4F0]/40 hover:text-[#E8E4F0]/70 transition-colors">
               새 꿈 해석
             </button>
           )}
@@ -263,27 +263,27 @@ export default function DreamPage() {
                 style={{ textShadow:'0 0 14px rgba(96,165,250,0.8)', filter:'drop-shadow(0 0 10px rgba(96,165,250,0.4))' }}>
                 ☽
               </div>
-              <div className="text-blue-400/60 text-[11px] font-pixel mb-2">몽신 夢神 아라</div>
-              <h1 className="font-serif-kr text-2xl text-white font-semibold mb-3">꿈 이야기를 들려주세요</h1>
-              <p className="text-[#E8E4F0]/45 text-sm leading-relaxed italic">
+              <div className="text-blue-400/60 text-xs font-pixel mb-2">몽신 夢神 아라</div>
+              <h1 className="font-serif-kr text-3xl text-white font-semibold mb-3">꿈 이야기를 들려주세요</h1>
+              <p className="text-[#E8E4F0]/45 text-base leading-relaxed italic">
                 "당신의 꿈이 내게 흘러오고 있어요…<br />꿈의 결을 함께 살펴볼게요."
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="border border-blue-500/20 bg-blue-500/5 p-5">
-                <label className="block text-xs text-blue-400/70 font-pixel mb-3 tracking-wider">// 꿈 내용</label>
+                <label className="block text-sm text-blue-400/70 font-pixel mb-3 tracking-wider">// 꿈 내용</label>
                 <textarea value={dream} onChange={e => setDream(e.target.value)}
                   placeholder="꿈에서 무슨 일이 있었나요? 장소, 등장인물, 사건, 느낌 등 기억나는 것을 모두 적어주세요."
                   rows={6} required
-                  className="w-full bg-transparent border border-blue-500/25 text-[#E8E4F0] text-sm px-4 py-3 resize-none focus:outline-none focus:border-blue-400 transition-colors placeholder:text-[#E8E4F0]/25 leading-relaxed"
+                  className="w-full bg-transparent border border-blue-500/25 text-[#E8E4F0] text-base px-4 py-3 resize-none focus:outline-none focus:border-blue-400 transition-colors placeholder:text-[#E8E4F0]/25 leading-relaxed"
                 />
-                <p className="text-[#E8E4F0]/25 text-xs mt-2">자세할수록 더 정확한 해몽이 가능합니다</p>
+                <p className="text-[#E8E4F0]/25 text-sm mt-2">자세할수록 더 정확한 해몽이 가능합니다</p>
               </div>
 
               {/* 감정 선택 — 글로우 반응 */}
               <div>
-                <label className="block text-xs text-blue-400/70 font-pixel mb-3 tracking-wider">
+                <label className="block text-sm text-blue-400/70 font-pixel mb-3 tracking-wider">
                   // 꿈 속에서 느낀 감정 (복수 선택 가능)
                 </label>
                 <div className="flex flex-wrap gap-2 mb-2">
@@ -291,7 +291,7 @@ export default function DreamPage() {
                     const isSelected = emotions.includes(em);
                     return (
                       <button key={em} type="button" onClick={() => toggleEmotion(em)}
-                        className={`px-3 py-1.5 text-xs border transition-all duration-200 ${
+                        className={`px-3 py-1.5 text-sm border transition-all duration-200 ${
                           isSelected
                             ? 'border-blue-400 bg-blue-600/20 text-blue-300'
                             : 'border-blue-500/20 text-[#E8E4F0]/40 hover:border-blue-500/50'
@@ -308,7 +308,7 @@ export default function DreamPage() {
                 </div>
                 {/* 아라의 감정 반응 */}
                 {emotionReaction && (
-                  <p className="text-blue-400/60 text-xs italic fade-up pl-1">
+                  <p className="text-blue-400/60 text-sm italic fade-up pl-1">
                     ☽ {emotionReaction}
                   </p>
                 )}
@@ -316,13 +316,13 @@ export default function DreamPage() {
 
               {/* 테마 선택 */}
               <div>
-                <label className="block text-xs text-blue-400/70 font-pixel mb-3 tracking-wider">
+                <label className="block text-sm text-blue-400/70 font-pixel mb-3 tracking-wider">
                   // 꿈에 등장한 주요 요소 (복수 선택 가능)
                 </label>
                 <div className="flex flex-wrap gap-2">
                   {THEME_OPTIONS.map(th => (
                     <button key={th} type="button" onClick={() => toggleTheme(th)}
-                      className={`px-3 py-1.5 text-xs border transition-colors ${
+                      className={`px-3 py-1.5 text-sm border transition-colors ${
                         themes.includes(th)
                           ? 'border-blue-400 bg-blue-600/20 text-blue-300'
                           : 'border-blue-500/20 text-[#E8E4F0]/40 hover:border-blue-500/50'
@@ -335,7 +335,7 @@ export default function DreamPage() {
               </div>
 
               <button type="submit" disabled={!dream.trim()}
-                className="w-full py-4 bg-blue-600 hover:bg-blue-500 disabled:opacity-30 disabled:cursor-not-allowed text-white font-medium text-sm transition-colors mt-2">
+                className="w-full py-4 bg-blue-600 hover:bg-blue-500 disabled:opacity-30 disabled:cursor-not-allowed text-white font-medium text-base transition-colors mt-2">
                 꿈 해석하기
               </button>
             </form>
@@ -346,12 +346,12 @@ export default function DreamPage() {
         {submitted && (
           <div>
             <div className="border border-blue-500/20 bg-blue-500/5 p-4 mb-6">
-              <div className="text-[10px] font-pixel text-blue-400/50 mb-2">// 꿈 내용</div>
-              <p className="text-[#E8E4F0]/60 text-sm leading-relaxed line-clamp-4">{dream}</p>
+              <div className="text-xs font-pixel text-blue-400/50 mb-2">// 꿈 내용</div>
+              <p className="text-[#E8E4F0]/60 text-base leading-relaxed line-clamp-4">{dream}</p>
               {(emotions.length > 0 || themes.length > 0) && (
                 <div className="flex flex-wrap gap-1.5 mt-3">
-                  {emotions.map(e => <span key={e} className="text-[10px] px-2 py-0.5 border border-blue-500/30 bg-blue-600/15 text-blue-300">{e}</span>)}
-                  {themes.map(t => <span key={t} className="text-[10px] px-2 py-0.5 border border-violet-500/30 bg-violet-600/15 text-violet-300">{t}</span>)}
+                  {emotions.map(e => <span key={e} className="text-xs px-2 py-0.5 border border-blue-500/30 bg-blue-600/15 text-blue-300">{e}</span>)}
+                  {themes.map(t => <span key={t} className="text-xs px-2 py-0.5 border border-violet-500/30 bg-violet-600/15 text-violet-300">{t}</span>)}
                 </div>
               )}
             </div>

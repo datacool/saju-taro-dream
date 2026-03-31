@@ -6,6 +6,9 @@ import {
   loadStamps, getStreak, getMonthStamps, loadAchievements,
   ACHIEVEMENTS, type ServiceKey,
 } from '@/lib/gamification';
+import BakJinin from '@/components/characters/BakJinin';
+import MadameCeleste from '@/components/characters/MadameCeleste';
+import MongshinAra from '@/components/characters/MongshinAra';
 
 const SERVICE_ICON: Record<ServiceKey, string> = { saju:'仙', tarot:'✦', dream:'☽' };
 const SERVICE_COLOR: Record<ServiceKey, string> = {
@@ -145,7 +148,7 @@ export default function HomePage() {
 
         {/* 히어로 */}
         <section className="text-center px-6 pt-16 pb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 border border-violet-500/30 rounded-full text-violet-400/80 text-[11px] mb-8 bg-violet-600/10 font-pixel">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 border border-violet-500/30 rounded-full text-violet-400/80 text-xs mb-8 bg-violet-600/10 font-pixel">
             <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse shrink-0" />
             AI 기반 통합 운세 서비스
           </div>
@@ -153,7 +156,7 @@ export default function HomePage() {
             당신의 운명을<br />
             <span className="glow-gold" style={{ color:'#FFB95F' }}>AI가 읽습니다</span>
           </h1>
-          <p className="text-[#E8E4F0]/50 text-sm md:text-base max-w-md mx-auto leading-relaxed">
+          <p className="text-[#E8E4F0]/50 text-base md:text-lg max-w-md mx-auto leading-relaxed">
             사주팔자의 지혜, 타로 카드의 상징, 꿈의 메시지—<br />
             세 가지 통로를 통해 삶의 방향을 제시합니다
           </p>
@@ -172,34 +175,47 @@ export default function HomePage() {
                 onMouseEnter={() => setHoveredId(svc.id)}
                 onMouseLeave={() => setHoveredId(null)}
               >
+                {/* 상단 레이블 + 심볼 */}
                 <div className="flex justify-between items-start mb-4">
-                  <span className={`text-[10px] font-pixel ${svc.accentClass} opacity-50`}>{svc.subtitle}</span>
+                  <span className={`text-xs font-pixel ${svc.accentClass} opacity-50`}>{svc.subtitle}</span>
                   <div className={`w-10 h-10 rounded-full border flex items-center justify-center text-lg font-serif-kr font-bold transition-all duration-300 ${svc.avatarRing}`}
                     style={{ borderColor:svc.accentColor+'50', background:svc.accentColor+'15', color:svc.accentColor }}>
                     {svc.symbol}
                   </div>
                 </div>
-                <div className={`text-[10px] font-pixel ${svc.accentClass} opacity-60 mb-1`}>{svc.character}</div>
+
+                {/* 캐릭터 포트레이트 */}
+                <div className="flex justify-center mb-3">
+                  <div className="relative overflow-hidden" style={{ width: '120px', height: '180px' }}>
+                    {svc.id === 'saju' && <BakJinin variant="card" />}
+                    {svc.id === 'tarot' && <MadameCeleste variant="card" />}
+                    {svc.id === 'dream' && <MongshinAra variant="card" />}
+                    {/* 하단 페이드 */}
+                    <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-[#0B1326] to-transparent" />
+                  </div>
+                </div>
+
+                <div className={`text-xs font-pixel ${svc.accentClass} opacity-60 mb-1`}>{svc.character}</div>
 
                 {/* 캐릭터 대사 hover */}
-                <div className={`overflow-hidden transition-all duration-300 ${hoveredId===svc.id ? 'max-h-20 mb-3' : 'max-h-0 mb-0'}`}>
-                  <p className={`text-[11px] leading-relaxed italic ${svc.accentClass} opacity-80 border-l-2 pl-2`}
+                <div className={`overflow-hidden transition-all duration-300 ${hoveredId===svc.id ? 'max-h-24 mb-3' : 'max-h-0 mb-0'}`}>
+                  <p className={`text-sm leading-relaxed italic ${svc.accentClass} opacity-80 border-l-2 pl-2`}
                     style={{ borderColor:svc.accentColor+'50' }}>
                     "{svc.quote}"
                   </p>
                 </div>
 
                 <h2 className={`font-serif-kr text-3xl font-bold mb-1 ${svc.accentClass}`}>{svc.title}</h2>
-                <p className="text-[#E8E4F0]/70 text-sm mb-4">{svc.desc}</p>
-                <p className="text-[#E8E4F0]/40 text-xs leading-relaxed mb-6 flex-1">{svc.detail}</p>
+                <p className="text-[#E8E4F0]/70 text-base mb-4">{svc.desc}</p>
+                <p className="text-[#E8E4F0]/40 text-sm leading-relaxed mb-6 flex-1">{svc.detail}</p>
                 <div className="flex flex-wrap gap-1.5 mb-6">
-                  {svc.tags.map(tag => <span key={tag} className={`text-[10px] px-2 py-0.5 border ${svc.badgeClass}`}>{tag}</span>)}
+                  {svc.tags.map(tag => <span key={tag} className={`text-xs px-2 py-0.5 border ${svc.badgeClass}`}>{tag}</span>)}
                 </div>
-                <Link href={svc.href} className={`block w-full text-center py-3 text-sm font-medium transition-colors ${svc.btnClass}`}>
+                <Link href={svc.href} className={`block w-full text-center py-3 text-base font-medium transition-colors ${svc.btnClass}`}>
                   {svc.id==='saju' ? '사주 분석 시작' : svc.id==='tarot' ? '타로 카드 보기' : '꿈 해석하기'}
                 </Link>
                 {svc.id==='saju' && (
-                  <Link href="/input?mode=daily" className={`block w-full text-center py-2.5 text-xs border transition-colors mt-2 ${svc.btnOutlineClass}`}>
+                  <Link href="/input?mode=daily" className={`block w-full text-center py-2.5 text-sm border transition-colors mt-2 ${svc.btnOutlineClass}`}>
                     오늘의 운세
                   </Link>
                 )}
@@ -213,16 +229,16 @@ export default function HomePage() {
           <div className="max-w-5xl mx-auto border border-violet-500/15 bg-violet-600/5 p-5">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <span className="text-[10px] font-pixel text-violet-400/50 tracking-wider">// 내 운세 기록</span>
+                <span className="text-xs font-pixel text-violet-400/50 tracking-wider">// 내 운세 기록</span>
                 {/* 스트릭 배지 */}
                 {streak > 0 && (
                   <div className="flex items-center gap-1.5 px-2.5 py-1 border border-amber-500/30 bg-amber-500/10">
                     <span className="text-amber-400 text-sm">🔥</span>
-                    <span className="text-amber-300 text-xs font-pixel">{streak}일 연속</span>
+                    <span className="text-amber-300 text-sm font-pixel">{streak}일 연속</span>
                   </div>
                 )}
                 {streak === 0 && (
-                  <span className="text-[10px] font-pixel text-[#E8E4F0]/25">오늘부터 시작해보세요</span>
+                  <span className="text-xs font-pixel text-[#E8E4F0]/25">오늘부터 시작해보세요</span>
                 )}
               </div>
               <button onClick={() => setShowCalendar(v => !v)}
@@ -233,7 +249,7 @@ export default function HomePage() {
 
             {/* 오늘의 도장 */}
             <div className="flex items-center gap-4 mb-4">
-              <span className="text-[10px] font-pixel text-[#E8E4F0]/30">오늘</span>
+              <span className="text-xs font-pixel text-[#E8E4F0]/30">오늘</span>
               <div className="flex gap-2">
                 {(['saju','tarot','dream'] as ServiceKey[]).map(svc => {
                   const stamped = todayStamps.includes(svc);
@@ -255,22 +271,22 @@ export default function HomePage() {
                 })}
               </div>
               {todayStamps.length === 0 && (
-                <span className="text-[10px] font-pixel text-[#E8E4F0]/20 italic">아직 오늘의 운세를 보지 않았어요</span>
+                <span className="text-xs font-pixel text-[#E8E4F0]/20 italic">아직 오늘의 운세를 보지 않았어요</span>
               )}
               {todayStamps.length > 0 && todayStamps.length < 3 && (
-                <span className="text-[10px] font-pixel text-[#E8E4F0]/30 italic">
+                <span className="text-xs font-pixel text-[#E8E4F0]/30 italic">
                   오늘 {todayStamps.length}가지 운세를 봤어요
                   {todayStamps.length < 3 && ' · 나머지도 해보세요!'}
                 </span>
               )}
               {todayStamps.length === 3 && (
-                <span className="text-amber-400/70 text-[10px] font-pixel">✦ 오늘 삼합 달성!</span>
+                <span className="text-amber-400/70 text-xs font-pixel">✦ 오늘 삼합 달성!</span>
               )}
             </div>
 
             {/* 스트릭 문구 */}
             {streak > 0 && (
-              <p className="text-[10px] font-pixel text-[#E8E4F0]/25 mb-4">
+              <p className="text-xs font-pixel text-[#E8E4F0]/25 mb-4">
                 {streak >= 7 ? '🌟 ' : ''}{streak}일 연속 방문 중이에요. 어제 빠졌어도 오늘부터 다시 시작할 수 있어요.
               </p>
             )}
@@ -278,13 +294,13 @@ export default function HomePage() {
             {/* 캘린더 */}
             {showCalendar && (
               <div className="fade-up border-t border-violet-500/10 pt-4 mt-2">
-                <div className="text-[10px] font-pixel text-[#E8E4F0]/30 mb-3 text-center">
+                <div className="text-xs font-pixel text-[#E8E4F0]/30 mb-3 text-center">
                   {year}년 {month}월
                 </div>
                 {/* 요일 헤더 */}
                 <div className="grid grid-cols-7 gap-1 mb-1">
                   {DOW_LABELS.map(d => (
-                    <div key={d} className="text-center text-[9px] font-pixel text-[#E8E4F0]/20">{d}</div>
+                    <div key={d} className="text-center text-[11px] font-pixel text-[#E8E4F0]/20">{d}</div>
                   ))}
                 </div>
                 {/* 날짜 그리드 */}
@@ -305,7 +321,7 @@ export default function HomePage() {
                           borderRadius: '2px',
                         }}
                       >
-                        <span className={`text-[9px] font-pixel leading-none ${isToday ? 'text-violet-300' : hasStamp ? 'text-[#E8E4F0]/50' : 'text-[#E8E4F0]/20'}`}>
+                        <span className={`text-[11px] font-pixel leading-none ${isToday ? 'text-violet-300' : hasStamp ? 'text-[#E8E4F0]/50' : 'text-[#E8E4F0]/20'}`}>
                           {d}
                         </span>
                         {hasStamp && (
@@ -324,7 +340,7 @@ export default function HomePage() {
                   {(['saju','tarot','dream'] as ServiceKey[]).map(svc => (
                     <div key={svc} className="flex items-center gap-1">
                       <div className="w-2 h-2 rounded-full" style={{ background: SERVICE_COLOR[svc] }} />
-                      <span className="text-[9px] font-pixel text-[#E8E4F0]/30">
+                      <span className="text-[11px] font-pixel text-[#E8E4F0]/30">
                         {svc==='saju'?'사주':svc==='tarot'?'타로':'꿈해몽'}
                       </span>
                     </div>
@@ -336,16 +352,16 @@ export default function HomePage() {
             {/* 업적 */}
             {unlockedAch.length > 0 && (
               <div className="border-t border-violet-500/10 pt-4 mt-4">
-                <div className="text-[10px] font-pixel text-violet-400/40 mb-3">업적</div>
+                <div className="text-xs font-pixel text-violet-400/40 mb-3">업적</div>
                 <div className="flex flex-wrap gap-2">
                   {unlockedAch.map(id => {
                     const ach = ACHIEVEMENTS[id];
                     if (!ach) return null;
                     return (
-                      <div key={id} className={`flex items-center gap-1.5 px-2.5 py-1.5 border text-xs ${ach.colorClass}`}
+                      <div key={id} className={`flex items-center gap-1.5 px-2.5 py-1.5 border text-sm ${ach.colorClass}`}
                         title={ach.desc}>
                         <span>{ach.icon}</span>
-                        <span className="font-pixel text-[10px]">{ach.title}</span>
+                        <span className="font-pixel text-xs">{ach.title}</span>
                       </div>
                     );
                   })}
@@ -357,7 +373,7 @@ export default function HomePage() {
 
         {/* 푸터 */}
         <footer className="border-t border-violet-500/10 px-6 py-6 text-center">
-          <p className="text-[#E8E4F0]/25 text-[11px] font-pixel">
+          <p className="text-[#E8E4F0]/25 text-xs font-pixel">
             운세 에이전트 · AI 기반 사주·타로·꿈해몽 통합 서비스 · 오락 목적으로 제작되었습니다
           </p>
         </footer>
